@@ -1,11 +1,82 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <title>My Website</title>
-    <meta charset="UTF-8" />
-  </head>
-  <body>
-    <h1>Hello, GitHub Pages!</h1>
-    <p>ยินดีต้อนรับสู่เว็บไซต์ของฉัน</p>
-  </body>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>ค้นหารายชื่อ GitHub</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      background: #f4f4f4;
+    }
+    #searchForm {
+      margin-bottom: 20px;
+    }
+    #results {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 15px;
+    }
+    .user-card {
+      background: white;
+      padding: 10px;
+      border-radius: 8px;
+      text-align: center;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    .user-card img {
+      width: 80px;
+      border-radius: 50%;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>ค้นหารายชื่อผู้ใช้ GitHub</h1>
+
+  <form id="searchForm">
+    <input type="text" id="searchInput" placeholder="ค้นหาชื่อผู้ใช้..." required />
+    <button type="submit">ค้นหา</button>
+  </form>
+
+  <div id="results"></div>
+
+  <script>
+    const form = document.getElementById('searchForm');
+    const input = document.getElementById('searchInput');
+    const results = document.getElementById('results');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const query = input.value.trim();
+      if (!query) return;
+
+      results.innerHTML = '<p>กำลังค้นหา...</p>';
+
+      try {
+        const res = await fetch(`https://api.github.com/search/users?q=${encodeURIComponent(query)}`);
+        const data = await res.json();
+
+        if (data.items.length === 0) {
+          results.innerHTML = '<p>ไม่พบผู้ใช้</p>';
+          return;
+        }
+
+        results.innerHTML = data.items.map(user => `
+          <div class="user-card">
+            <a href="${user.html_url}" target="_blank">
+              <img src="${user.avatar_url}" alt="${user.login}" />
+              <p>${user.login}</p>
+            </a>
+          </div>
+        `).join('');
+      } catch (err) {
+        results.innerHTML = '<p>เกิดข้อผิดพลาดในการดึงข้อมูล</p>';
+        console.error(err);
+      }
+    });
+  </script>
+
+</body>
 </html>
