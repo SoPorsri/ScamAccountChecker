@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="th">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>ค้นหารายชื่อมิจฉาชีพ</title>
+  <title>ค้นหาและบันทึกรายชื่อ GitHub</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -13,7 +13,7 @@
     #searchForm {
       margin-bottom: 20px;
     }
-    #results {
+    #results, #savedUsers {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
       gap: 15px;
@@ -29,11 +29,23 @@
       width: 80px;
       border-radius: 50%;
     }
+    button.save-btn {
+      margin-top: 8px;
+      padding: 5px 10px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    h2 {
+      margin-top: 40px;
+    }
   </style>
 </head>
 <body>
 
-  <h1>ค้นหารายชื่อมิจฉาชีพ</h1>
+  <h1>ค้นหาและบันทึกรายชื่อ GitHub</h1>
 
   <form id="searchForm">
     <input type="text" id="searchInput" placeholder="ค้นหาชื่อผู้ใช้..." required />
@@ -42,10 +54,40 @@
 
   <div id="results"></div>
 
+  <h2>รายชื่อที่บันทึกไว้</h2>
+  <div id="savedUsers"></div>
+
   <script>
     const form = document.getElementById('searchForm');
     const input = document.getElementById('searchInput');
     const results = document.getElementById('results');
+    const savedUsersContainer = document.getElementById('savedUsers');
+
+    let savedUsers = JSON.parse(localStorage.getItem('savedUsers')) || [];
+
+    function renderSavedUsers() {
+      if (savedUsers.length === 0) {
+        savedUsersContainer.innerHTML = "<p>ยังไม่มีรายชื่อที่บันทึกไว้</p>";
+        return;
+      }
+
+      savedUsersContainer.innerHTML = savedUsers.map(user => `
+        <div class="user-card">
+          <a href="${user.html_url}" target="_blank">
+            <img src="${user.avatar_url}" alt="${user.login}" />
+            <p>${user.login}</p>
+          </a>
+        </div>
+      `).join('');
+    }
+
+    function saveUser(user) {
+      if (!savedUsers.find(u => u.login === user.login)) {
+        savedUsers.push(user);
+        localStorage.setItem('savedUsers', JSON.stringify(savedUsers));
+        renderSavedUsers();
+      }
+    }
 
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
@@ -58,7 +100,7 @@
         const res = await fetch(`https://api.github.com/search/users?q=${encodeURIComponent(query)}`);
         const data = await res.json();
 
-        if (data.items.length === 0) {
+        if (!data.items.length) {
           results.innerHTML = '<p>ไม่พบผู้ใช้</p>';
           return;
         }
@@ -69,6 +111,7 @@
               <img src="${user.avatar_url}" alt="${user.login}" />
               <p>${user.login}</p>
             </a>
+            <button class="save-btn" onclick='saveUser(${JSON.stringify(user)})'>บันทึกรายชื่อ</button>
           </div>
         `).join('');
       } catch (err) {
@@ -76,6 +119,8 @@
         console.error(err);
       }
     });
+
+    renderSavedUsers();
   </script>
 
 </body>
