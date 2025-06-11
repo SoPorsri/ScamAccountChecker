@@ -86,13 +86,19 @@
       data.forEach(person => {
         const li = document.createElement('li');
         li.className = "bg-gray-700 p-3 rounded-md border border-gray-600 text-white flex justify-between items-center";
-        li.innerHTML = `
-          <span>${person.scamname} ${person.scamlastname}</span>
-          <button onclick="deletePerson(${person.id})"
-            class="bg-red-500 hover:bg-red-600 text-white px-2 py-1 rounded-md text-sm">
-            ลบ
-          </button>
-        `;
+    
+        let html = `<span>${person.scamname} ${person.scamlastname}</span>`;
+    
+        // ✅ แสดงปุ่มลบเฉพาะตอนที่ล็อกอินแล้วเท่านั้น
+        if (currentUser) {
+          html += `
+            <button onclick="deletePerson(${person.id})"
+              class="bg-red-500 hover:bg-red-600 text-white px-2 py-1 rounded-md text-sm ml-4">
+              ลบ
+            </button>`;
+        }
+    
+        li.innerHTML = html;
         list.appendChild(li);
       });
     }
