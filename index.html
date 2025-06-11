@@ -30,3 +30,26 @@
         .select('scamname');
 
       console.log("ผลลัพธ์จาก Supabase:", data, error);
+
+      if (error) {
+        listElement.innerHTML = `<li>เกิดข้อผิดพลาด: ${error.message}</li>`;
+        return;
+      }
+
+      if (!data || data.length === 0) {
+        listElement.innerHTML = '<li>ไม่มีข้อมูล</li>';
+        return;
+      }
+
+      listElement.innerHTML = '';
+      data.forEach(row => {
+        const li = document.createElement('li');
+        li.textContent = row.scamname;
+        listElement.appendChild(li);
+      });
+    }
+
+    loadPeople();
+  </script>
+</body>
+</html>
