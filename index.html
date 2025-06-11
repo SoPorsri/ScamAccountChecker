@@ -5,60 +5,84 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Scammer List</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
-  <h1>รายชื่อในฐานข้อมูล</h1>
+<body class="bg-gray-100 text-gray-800">
+  <div class="max-w-2xl mx-auto mt-10 p-6 bg-white shadow-md rounded-xl">
+    <h1 class="text-2xl font-bold mb-4 text-center">📋 รายชื่อผู้ต้องสงสัย</h1>
 
-  <!-- 🔍 ค้นหา -->
-  <input type="text" id="search" placeholder="ค้นหารายชื่อ..." />
+    <!-- 🔐 รหัสผ่าน -->
+    <div class="mb-4">
+      <input type="password" id="author-password" placeholder="ป้อนรหัสผ่านผู้เขียน"
+        class="w-full px-3 py-2 border border-gray-300 rounded-md" />
+      <button onclick="loginAuthor()" class="mt-2 w-full bg-blue-500 hover:bg-blue-600 text-white py-2 rounded-md">เข้าสู่ระบบ</button>
+    </div>
 
-  <!-- ➕ เพิ่มรายชื่อ -->
-  <input type="text" id="new-name" placeholder="เพิ่มชื่อใหม่" />
-  <button onclick="addPerson()">เพิ่มชื่อ</button>
+    <!-- 🔍 ค้นหา -->
+    <div class="mb-4">
+      <input type="text" id="search" placeholder="🔍 ค้นหารายชื่อ..."
+        class="w-full px-3 py-2 border border-gray-300 rounded-md" />
+    </div>
 
-  <ul id="people-list">
-    <li>กำลังโหลด...</li>
-  </ul>
+    <!-- ➕ เพิ่มรายชื่อ -->
+    <div class="mb-4 flex space-x-2">
+      <input type="text" id="new-name" placeholder="เพิ่มชื่อใหม่"
+        class="flex-1 px-3 py-2 border border-gray-300 rounded-md" />
+      <button id="add-button" onclick="addPerson()" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-md" disabled>เพิ่ม</button>
+    </div>
+
+    <!-- รายชื่อ -->
+    <ul id="people-list" class="space-y-2">
+      <li>กำลังโหลด...</li>
+    </ul>
+  </div>
 
   <script>
     const SUPABASE_URL = 'https://pklvscffpbapogezoxyn.supabase.co';
-    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBrbHZzY2ZmcGJhcG9nZXpveHluIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDk1NTIxNTYsImV4cCI6MjA2NTEyODE1Nn0.O0cXyJAo0qdbNZsLqK1zpo1lS1H1mrudaGz2VaEQQaM';
-    
-    // ✅ สร้าง client อย่างถูกต้อง
+    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBrbHZzY2ZmcGJhcG9nZXpveHluIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDk1NTIxNTYsImV4cCI6MjA2NTEyODE1Nn0.O0cXyJAo0qdbNZsLqK1zpo1lS1H1mrudaGz2VaEQQaM'; // ปิดกั้น PUBLIC KEY ตัวจริงเพื่อความปลอดภัย
+
     const { createClient } = supabase;
     const supabaseClient = createClient(SUPABASE_URL, SUPABASE_KEY);
 
     let allPeople = [];
 
-   async function loadPeople() {
-      const { data, error } = await supabaseClient.from('scammer').select('id,scamname,scamlastname');
-      console.log("ERROR", error); // 👈 เพิ่มตรงนี้
+    const AUTHOR_PASSWORD = "secret123"; // 🔐 รหัสผ่านของผู้เขียน
+    let isAuthor = false;
+
+    async function loadPeople() {
+      const { data, error } = await supabaseClient.from('scammer').select('id,scamname');
       if (error) {
-        document.getElementById('people-list').innerHTML = `<li>เกิดข้อผิดพลาด: ${error.message}</li>`;
+        document.getElementById('people-list').innerHTML = `<li class="text-red-500">${error.message}</li>`;
         return;
       }
-        allPeople = data;
-        showPeople(data);
+      allPeople = data;
+      showPeople(data);
     }
 
     function showPeople(data) {
       const list = document.getElementById('people-list');
       list.innerHTML = '';
       if (data.length === 0) {
-        list.innerHTML = '<li>ไม่มีข้อมูล</li>';
+        list.innerHTML = '<li class="text-gray-500">ไม่มีข้อมูล</li>';
         return;
       }
 
       data.forEach(person => {
         const li = document.createElement('li');
-        li.textContent = person.scamname;
+        li.className = "bg-gray-50 p-3 rounded-md flex justify-between items-center border";
 
-        // 🗑 ปุ่มลบ
-        const delBtn = document.createElement('button');
-        delBtn.textContent = 'ลบ';
-        delBtn.style.marginLeft = '10px';
-        delBtn.onclick = () => deletePerson(person.id);
-        li.appendChild(delBtn);
+        const nameSpan = document.createElement('span');
+        nameSpan.textContent = person.scamname;
+        li.appendChild(nameSpan);
+
+        // 🗑 ปุ่มลบ (เฉพาะผู้เขียน)
+        if (isAuthor) {
+          const delBtn = document.createElement('button');
+          delBtn.textContent = 'ลบ';
+          delBtn.className = "bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded";
+          delBtn.onclick = () => deletePerson(person.id);
+          li.appendChild(delBtn);
+        }
 
         list.appendChild(li);
       });
@@ -94,6 +118,20 @@
         return;
       }
       await loadPeople();
+    }
+
+    // 🔐 เข้าสู่ระบบผู้เขียน
+    function loginAuthor() {
+      const inputPassword = document.getElementById('author-password').value.trim();
+      if (inputPassword === AUTHOR_PASSWORD) {
+        isAuthor = true;
+        document.getElementById('add-button').disabled = false;
+        document.getElementById('author-password').value = '';
+        alert("เข้าสู่ระบบสำเร็จ ✅");
+        showPeople(allPeople); // refresh UI
+      } else {
+        alert("รหัสผ่านไม่ถูกต้อง ❌");
+      }
     }
 
     loadPeople();
