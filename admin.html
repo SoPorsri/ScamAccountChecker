@@ -193,18 +193,37 @@
     }
     
     async function saveEdit(id, newName, newLastname) {
-      const { error } = await supabaseClient
+      newName = newName.trim();
+      newLastname = newLastname.trim();
+    
+      if (!newName || !newLastname) {
+        alert("กรุณากรอกชื่อและนามสกุลให้ครบ");
+        return;
+      }
+    
+      const { data, error } = await supabaseClient
         .from('scammer')
-        .update({ scamname: newName.trim(), scamlastname: newLastname.trim() })
-        .eq('id', id);
+        .update({
+          scamname: newName,
+          scamlastname: newLastname
+        })
+        .eq('id', id)
+        .select(); // <- เพิ่ม select เพื่อตรวจสอบผลลัพธ์
     
       if (error) {
         alert('บันทึกไม่สำเร็จ: ' + error.message);
         return;
       }
     
-      await loadPeople(); // โหลดใหม่
+      if (data.length === 0) {
+        alert("ไม่พบข้อมูลที่ต้องการแก้ไข");
+        return;
+      }
+    
+      // โหลดใหม่หลังจากอัปเดต
+      await loadPeople();
     }
+
 
 
     async function login() {
