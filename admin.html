@@ -37,12 +37,16 @@
     </div>
 
     <!-- ➕ เพิ่มรายชื่อ -->
-    <div id="add-section" class="hidden mb-4 flex flex-col sm:flex-row sm:space-x-2 space-y-2 sm:space-y-0">
+    <div id="add-section" class="hidden mb-4 space-y-2">
       <input type="text" id="new-name" placeholder="เพิ่มชื่อใหม่"
         class="w-full px-3 py-2 border border-gray-400 bg-gray-100 text-gray-800 rounded-md" />
       <input type="text" id="new-lastname" placeholder="เพิ่มนามสกุล"
         class="w-full px-3 py-2 border border-gray-400 bg-gray-100 text-gray-800 rounded-md" />
-      <button id="add-button" onclick="addPerson()" class="w-full sm:w-auto bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-md">
+      <input type="text" id="informer" placeholder="ชื่อผู้แจ้ง"
+        class="w-full px-3 py-2 border border-gray-400 bg-gray-100 text-gray-800 rounded-md" />
+      <input type="text" id="url-informer" placeholder="ลิงก์ Facebook ผู้แจ้ง"
+        class="w-full px-3 py-2 border border-gray-400 bg-gray-100 text-gray-800 rounded-md" />
+      <button id="add-button" onclick="addPerson()" class="w-full bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-md">
         เพิ่ม
       </button>
     </div>
@@ -65,13 +69,13 @@
     async function loadPeople() {
       const { data, error } = await supabaseClient
         .from('scammer')
-        .select('id, scamname, scamlastname');
-
+        .select('id, scamname, scamlastname, informer, url_informer');
+    
       if (error) {
         document.getElementById('people-list').innerHTML = `<li class="text-red-500">${error.message}</li>`;
         return;
       }
-
+    
       allPeople = data;
       showPeople(data);
     }
@@ -92,9 +96,16 @@
         const div = document.createElement('div');
         div.className = "flex flex-col sm:flex-row sm:justify-between sm:items-center space-y-2 sm:space-y-0";
     
+
         const nameSpan = document.createElement('span');
         nameSpan.className = "text-lg";
-        nameSpan.textContent = `${person.scamname} ${person.scamlastname}`;
+        nameSpan.innerHTML = `
+          ${person.scamname} ${person.scamlastname}<br>
+          <small class="text-sm text-gray-500">
+            👤 ผู้แจ้ง: ${person.informer || '-'} | 
+            <a href="${person.url_informer}" target="_blank" class="text-blue-600 underline">FB</a>
+          </small>
+        `;
     
         div.appendChild(nameSpan);
     
@@ -135,18 +146,35 @@
     async function addPerson() {
       const name = document.getElementById('new-name').value.trim();
       const lastname = document.getElementById('new-lastname').value.trim();
-      if (!name || !lastname) return;
-
-      const { error } = await supabaseClient.from('scammer').insert([{ scamname: name, scamlastname: lastname }]);
+      const informer = document.getElementById('informer').value.trim();
+      const url = document.getElementById('url-informer').value.trim();
+    
+      if (!name || !lastname || !informer || !url) {
+        alert("กรุณากรอกข้อมูลให้ครบ");
+        return;
+      }
+    
+      const { error } = await supabaseClient.from('scammer').insert([{
+        scamname: name,
+        scamlastname: lastname,
+        informer: informer,
+        url_informer: url
+      }]);
+    
       if (error) {
         alert('เกิดข้อผิดพลาด: ' + error.message);
         return;
       }
-
+    
+      // ล้างช่อง input
       document.getElementById('new-name').value = '';
       document.getElementById('new-lastname').value = '';
+      document.getElementById('informer').value = '';
+      document.getElementById('url-informer').value = '';
+    
       await loadPeople();
     }
+
 
     async function deletePerson(id) {
       if (!confirm("คุณแน่ใจว่าต้องการลบข้อมูลนี้ใช่ไหม?")) return;
