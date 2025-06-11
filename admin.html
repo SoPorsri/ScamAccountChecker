@@ -53,7 +53,7 @@
 
   <script>
     const SUPABASE_URL = 'https://pklvscffpbapogezoxyn.supabase.co';
-    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBrbHZzY2ZmcGJhcG9nZXpveHluIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDk1NTIxNTYsImV4cCI6MjA2NTEyODE1Nn0.O0cXyJAo0qdbNZsLqK1zpo1lS1H1mrudaGz2VaEQQaM'; // 🔐 เปลี่ยนเป็นของจริงเมื่อใช้งาน
+    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBrbHZzY2ZmcGJhcG9nZXpveHluIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDk1NTIxNTYsImV4cCI6MjA2NTEyODE1Nn0.O0cXyJAo0qdbNZsLqK1zpo1lS1H1mrudaGz2VaEQQaM';
     const { createClient } = supabase;
     const supabaseClient = createClient(SUPABASE_URL, SUPABASE_KEY);
 
@@ -85,8 +85,14 @@
 
       data.forEach(person => {
         const li = document.createElement('li');
-        li.className = "bg-gray-700 p-3 rounded-md border border-gray-600 text-white";
-        li.textContent = `${person.scamname} ${person.scamlastname}`;
+        li.className = "bg-gray-700 p-3 rounded-md border border-gray-600 text-white flex justify-between items-center";
+        li.innerHTML = `
+          <span>${person.scamname} ${person.scamlastname}</span>
+          <button onclick="deletePerson(${person.id})"
+            class="bg-red-500 hover:bg-red-600 text-white px-2 py-1 rounded-md text-sm">
+            ลบ
+          </button>
+        `;
         list.appendChild(li);
       });
     }
@@ -113,6 +119,22 @@
 
       document.getElementById('new-name').value = '';
       document.getElementById('new-lastname').value = '';
+      await loadPeople();
+    }
+
+    async function deletePerson(id) {
+      if (!confirm("คุณแน่ใจว่าต้องการลบข้อมูลนี้ใช่ไหม?")) return;
+
+      const { error } = await supabaseClient
+        .from('scammer')
+        .delete()
+        .eq('id', id);
+
+      if (error) {
+        alert('ลบไม่สำเร็จ: ' + error.message);
+        return;
+      }
+
       await loadPeople();
     }
 
