@@ -204,45 +204,69 @@ nameSpan.innerHTML = html;
 
     function startEdit(person, liElement) {
       const editForm = document.createElement('div');
-      editForm.className = "mt-3 flex flex-col sm:flex-row sm:items-center space-y-2 sm:space-y-0 sm:space-x-2";
+      editForm.className = "mt-3 flex flex-col space-y-2";
     
       const nameInput = document.createElement('input');
       nameInput.type = "text";
       nameInput.value = person.scamname;
+      nameInput.placeholder = "ชื่อ";
       nameInput.className = "px-3 py-2 border border-gray-400 bg-white text-gray-800 rounded-md";
     
       const lastnameInput = document.createElement('input');
       lastnameInput.type = "text";
       lastnameInput.value = person.scamlastname;
+      lastnameInput.placeholder = "นามสกุล";
       lastnameInput.className = "px-3 py-2 border border-gray-400 bg-white text-gray-800 rounded-md";
+    
+      const informerInput = document.createElement('input');
+      informerInput.type = "text";
+      informerInput.value = person.informer || '';
+      informerInput.placeholder = "ผู้แจ้ง";
+      informerInput.className = "px-3 py-2 border border-gray-400 bg-white text-gray-800 rounded-md";
+    
+      const urlInput = document.createElement('input');
+      urlInput.type = "text";
+      urlInput.value = person.url_informer || '';
+      urlInput.placeholder = "ลิงก์ Facebook ผู้แจ้ง";
+      urlInput.className = "px-3 py-2 border border-gray-400 bg-white text-gray-800 rounded-md";
     
       const saveBtn = document.createElement('button');
       saveBtn.textContent = '💾 บันทึก';
       saveBtn.className = "bg-green-600 hover:bg-green-700 text-white px-3 py-2 rounded-md";
-      saveBtn.onclick = () => saveEdit(person.id, nameInput.value, lastnameInput.value);
+      saveBtn.onclick = () =>
+        saveEdit(person.id, nameInput.value, lastnameInput.value, informerInput.value, urlInput.value);
     
       editForm.appendChild(nameInput);
       editForm.appendChild(lastnameInput);
+      editForm.appendChild(informerInput);
+      editForm.appendChild(urlInput);
       editForm.appendChild(saveBtn);
     
-      // แทนที่เนื้อหาเดิมด้วยฟอร์มแก้ไข
       liElement.innerHTML = '';
       liElement.appendChild(editForm);
     }
+
     
-    async function saveEdit(id, newName, newLastname) {
+    async function saveEdit(id, newName, newLastname, newInformer, newUrlInformer) {
       newName = newName.trim();
       newLastname = newLastname.trim();
+      newInformer = newInformer.trim();
+      newUrlInformer = newUrlInformer.trim();
     
-      console.log("DEBUG: id =", id, "name =", newName, "lastname =", newLastname);
+      const saveadmin = currentUser?.email || 'unknown';
+      const savetime = new Date().toISOString();
     
       const { data, error } = await supabaseClient
         .from('scammer')
         .update({
           scamname: newName,
-          scamlastname: newLastname
+          scamlastname: newLastname,
+          informer: newInformer,
+          url_informer: newUrlInformer,
+          saveadmin: saveadmin,
+          savetime: savetime
         })
-        .eq('id', id.toString()) // 💡 แปลงเป็น string เผื่อ Supabase ใช้ UUID หรือ text
+        .eq('id', id.toString())
         .select();
     
       if (error) {
