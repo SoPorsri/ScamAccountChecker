@@ -11,24 +11,10 @@
   <div class="max-w-2xl mx-auto mt-10 p-6 bg-white shadow-md rounded-xl">
     <h1 class="text-2xl font-bold mb-4 text-center">📋 รายชื่อผู้ต้องสงสัย</h1>
 
-    <!-- 🔐 รหัสผ่าน -->
-    <div class="mb-4">
-      <input type="password" id="author-password" placeholder="ป้อนรหัสผ่านผู้เขียน"
-        class="w-full px-3 py-2 border border-gray-300 rounded-md" />
-      <button onclick="loginAuthor()" class="mt-2 w-full bg-blue-500 hover:bg-blue-600 text-white py-2 rounded-md">เข้าสู่ระบบ</button>
-    </div>
-
     <!-- 🔍 ค้นหา -->
     <div class="mb-4">
       <input type="text" id="search" placeholder="🔍 ค้นหารายชื่อ..."
         class="w-full px-3 py-2 border border-gray-300 rounded-md" />
-    </div>
-
-    <!-- ➕ เพิ่มรายชื่อ -->
-    <div class="mb-4 flex space-x-2">
-      <input type="text" id="new-name" placeholder="เพิ่มชื่อใหม่"
-        class="flex-1 px-3 py-2 border border-gray-300 rounded-md" />
-      <button id="add-button" onclick="addPerson()" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-md" disabled>เพิ่ม</button>
     </div>
 
     <!-- รายชื่อ -->
@@ -39,15 +25,11 @@
 
   <script>
     const SUPABASE_URL = 'https://pklvscffpbapogezoxyn.supabase.co';
-    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBrbHZzY2ZmcGJhcG9nZXpveHluIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDk1NTIxNTYsImV4cCI6MjA2NTEyODE1Nn0.O0cXyJAo0qdbNZsLqK1zpo1lS1H1mrudaGz2VaEQQaM'; // ปิดกั้น PUBLIC KEY ตัวจริงเพื่อความปลอดภัย
-
+    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBrbHZzY2ZmcGJhcG9nZXpveHluIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDk1NTIxNTYsImV4cCI6MjA2NTEyODE1Nn0.O0cXyJAo0qdbNZsLqK1zpo1lS1H1mrudaGz2VaEQQaM'; // แนะนำให้ย้าย KEY ไปฝั่ง Server ถ้าใส่ข้อมูลสำคัญ
     const { createClient } = supabase;
     const supabaseClient = createClient(SUPABASE_URL, SUPABASE_KEY);
 
     let allPeople = [];
-
-    const AUTHOR_PASSWORD = "secret123"; // 🔐 รหัสผ่านของผู้เขียน
-    let isAuthor = false;
 
     async function loadPeople() {
       const { data, error } = await supabaseClient.from('scammer').select('id,scamname');
@@ -69,21 +51,8 @@
 
       data.forEach(person => {
         const li = document.createElement('li');
-        li.className = "bg-gray-50 p-3 rounded-md flex justify-between items-center border";
-
-        const nameSpan = document.createElement('span');
-        nameSpan.textContent = person.scamname;
-        li.appendChild(nameSpan);
-
-        // 🗑 ปุ่มลบ (เฉพาะผู้เขียน)
-        if (isAuthor) {
-          const delBtn = document.createElement('button');
-          delBtn.textContent = 'ลบ';
-          delBtn.className = "bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded";
-          delBtn.onclick = () => deletePerson(person.id);
-          li.appendChild(delBtn);
-        }
-
+        li.className = "bg-gray-50 p-3 rounded-md border";
+        li.textContent = person.scamname;
         list.appendChild(li);
       });
     }
@@ -94,45 +63,6 @@
       const filtered = allPeople.filter(p => p.scamname.toLowerCase().includes(keyword));
       showPeople(filtered);
     });
-
-    // ➕ เพิ่มชื่อ
-    async function addPerson() {
-      const name = document.getElementById('new-name').value.trim();
-      if (!name) return;
-
-      const { error } = await supabaseClient.from('scammer').insert([{ scamname: name }]);
-      if (error) {
-        alert('เกิดข้อผิดพลาด: ' + error.message);
-        return;
-      }
-
-      document.getElementById('new-name').value = '';
-      await loadPeople();
-    }
-
-    // 🗑 ลบชื่อ
-    async function deletePerson(id) {
-      const { error } = await supabaseClient.from('scammer').delete().eq('id', id);
-      if (error) {
-        alert('ลบไม่สำเร็จ: ' + error.message);
-        return;
-      }
-      await loadPeople();
-    }
-
-    // 🔐 เข้าสู่ระบบผู้เขียน
-    function loginAuthor() {
-      const inputPassword = document.getElementById('author-password').value.trim();
-      if (inputPassword === AUTHOR_PASSWORD) {
-        isAuthor = true;
-        document.getElementById('add-button').disabled = false;
-        document.getElementById('author-password').value = '';
-        alert("เข้าสู่ระบบสำเร็จ ✅");
-        showPeople(allPeople); // refresh UI
-      } else {
-        alert("รหัสผ่านไม่ถูกต้อง ❌");
-      }
-    }
 
     loadPeople();
   </script>
