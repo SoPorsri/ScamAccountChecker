@@ -321,6 +321,17 @@
       document.getElementById('people-list').innerHTML = '<li class="text-gray-600">กำลังโหลด...</li>';
     }
 
+    supabaseClient.auth.getSession().then(({ data: { session } }) => {
+      if (session && session.user) {
+        currentUser = session.user;
+        document.getElementById('user-name').textContent = `สวัสดี, ${currentUser.email}`;
+        document.getElementById('login-section').classList.add('hidden');
+        document.getElementById('user-info').classList.remove('hidden');
+        document.getElementById('add-section').classList.remove('hidden');
+      }
+      loadPeople();
+    });
+
     loadPeople();
   </script>
 </body>
