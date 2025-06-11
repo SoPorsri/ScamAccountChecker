@@ -36,13 +36,14 @@
     async function loadPeople() {
       const { data, error } = await supabaseClient
         .from('scammer')
-        .select('id, scamname, scamlastname');
-
+        .select('id, scamname, scamlastname')
+        .order('scamname', { ascending: true }); // ✅ เรียงตามชื่อ
+    
       if (error) {
         document.getElementById('people-list').innerHTML = `<li class="text-red-500">${error.message}</li>`;
         return;
       }
-
+    
       allPeople = data;
       showPeople(data);
     }
