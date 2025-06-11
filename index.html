@@ -25,13 +25,21 @@
 
   <script>
     const SUPABASE_URL = 'https://pklvscffpbapogezoxyn.supabase.co';
-    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBrbHZzY2ZmcGJhcG9nZXpveHluIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDk1NTIxNTYsImV4cCI6MjA2NTEyODE1Nn0.O0cXyJAo0qdbNZsLqK1zpo1lS1H1mrudaGz2VaEQQaM';
+    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBrbHZzY2ZmcGJhcG9nZXpveHluIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDk1NTIxNTYsImV4cCI6MjA2NTEyODE1Nn0.O0cXyJAo0qdbNZsLqK1zpo1lS1H1mrudaGz2VaEQQaM'; // ใช้ key ที่ไม่ใช่ `service_role` ใน client side
     const { createClient } = supabase;
     const supabaseClient = createClient(SUPABASE_URL, SUPABASE_KEY);
 
     let allPeople = [];
 
+    // ตรวจสอบว่า user ได้ล็อกอินหรือไม่
     async function loadPeople() {
+      const user = supabaseClient.auth.user(); // ตรวจสอบผู้ใช้ที่ล็อกอิน
+      if (!user) {
+        alert("กรุณาล็อกอินก่อนใช้งาน");
+        return;
+      }
+
+      // ดึงข้อมูลจากฐานข้อมูล โดยใช้ RLS
       const { data, error } = await supabaseClient
         .from('scammer')
         .select('id, scamname, scamlastname');
