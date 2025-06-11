@@ -193,22 +193,13 @@
     }
     
     async function saveEdit(id, newName, newLastname) {
-      newName = newName.trim();
-      newLastname = newLastname.trim();
-    
-      if (!newName || !newLastname) {
-        alert("กรุณากรอกชื่อและนามสกุลให้ครบ");
-        return;
-      }
+      console.log("DEBUG:", id, newName, newLastname);
     
       const { data, error } = await supabaseClient
         .from('scammer')
-        .update({
-          scamname: newName,
-          scamlastname: newLastname
-        })
+        .update({ scamname: newName.trim(), scamlastname: newLastname.trim() })
         .eq('id', id)
-        .select(); // <- เพิ่ม select เพื่อตรวจสอบผลลัพธ์
+        .select(); // สำคัญเพื่อดูผลลัพธ์
     
       if (error) {
         alert('บันทึกไม่สำเร็จ: ' + error.message);
@@ -220,7 +211,6 @@
         return;
       }
     
-      // โหลดใหม่หลังจากอัปเดต
       await loadPeople();
     }
 
