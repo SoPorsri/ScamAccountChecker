@@ -17,10 +17,12 @@
         class="w-full px-3 py-2 border border-gray-600 bg-gray-700 text-white rounded-md placeholder-gray-400" />
     </div>
 
-    <!-- รายชื่อ -->
-    <ul id="people-list" class="space-y-2">
-      <li class="text-gray-400">กำลังโหลด...</li>
-    </ul>
+    <!-- 🔳 โซนเทา + รายชื่อ -->
+    <div class="bg-gray-700 p-4 rounded-lg">
+      <ul id="people-list" class="space-y-2">
+        <li class="text-gray-300">กำลังโหลด...</li>
+      </ul>
+    </div>
   </div>
 
   <script>
@@ -56,7 +58,7 @@
 
       data.forEach(person => {
         const li = document.createElement('li');
-        li.className = "bg-gray-700 p-3 rounded-md border border-gray-600 text-white";
+        li.className = "bg-gray-800 p-3 rounded-md border border-gray-600 text-white";
         li.textContent = `${person.scamname} ${person.scamlastname}`;
         list.appendChild(li);
       });
