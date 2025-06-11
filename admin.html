@@ -7,16 +7,16 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-gray-100 text-gray-800">
-  <div class="max-w-2xl mx-auto mt-10 p-6 bg-white shadow-md rounded-xl">
-    <h1 class="text-2xl font-bold mb-4 text-center text-gray-900">📋 รายชื่อผู้ต้องสงสัย - Admin</h1>
+<body class="bg-gray-900 text-gray-100">
+  <div class="max-w-2xl mx-auto mt-10 p-4 sm:p-6 bg-gray-800 shadow-md rounded-xl">
+    <h1 class="text-2xl font-bold mb-4 text-center text-white">📋 รายชื่อผู้ต้องสงสัย - Admin</h1>
 
     <!-- 🔐 ฟอร์มเข้าสู่ระบบ -->
     <div id="login-section" class="mb-4 space-y-2">
       <input type="email" id="emailInput" placeholder="อีเมล"
-        class="w-full px-3 py-2 border border-gray-300 bg-gray-100 text-gray-800 rounded-md placeholder-gray-500" />
+        class="w-full px-3 py-2 border border-gray-600 bg-gray-700 text-white rounded-md placeholder-gray-400" />
       <input type="password" id="passwordInput" placeholder="รหัสผ่าน"
-        class="w-full px-3 py-2 border border-gray-300 bg-gray-100 text-gray-800 rounded-md placeholder-gray-500" />
+        class="w-full px-3 py-2 border border-gray-600 bg-gray-700 text-white rounded-md placeholder-gray-400" />
       <button onclick="login()" class="w-full bg-blue-500 hover:bg-blue-600 text-white py-2 rounded-md">
         เข้าสู่ระบบ
       </button>
@@ -24,7 +24,7 @@
 
     <!-- 👤 แสดงข้อมูลผู้ใช้ -->
     <div id="user-info" class="hidden mb-4">
-      <p id="user-name" class="text-gray-800 font-medium"></p>
+      <p id="user-name" class="text-white mb-2"></p>
       <button onclick="logout()" class="w-full bg-red-500 hover:bg-red-600 text-white py-2 rounded-md">
         ออกจากระบบ
       </button>
@@ -33,21 +33,23 @@
     <!-- 🔍 ค้นหา -->
     <div class="mb-4">
       <input type="text" id="search" placeholder="🔍 ค้นหาชื่อหรือนามสกุล..."
-        class="w-full px-3 py-2 border border-gray-300 bg-gray-100 text-gray-800 rounded-md placeholder-gray-500" />
+        class="w-full px-3 py-2 border border-gray-600 bg-gray-700 text-white rounded-md placeholder-gray-400" />
     </div>
 
     <!-- ➕ เพิ่มรายชื่อ (เฉพาะ admin) -->
-    <div id="add-section" class="hidden mb-4 flex space-x-2">
+    <div id="add-section" class="hidden mb-4 flex flex-col sm:flex-row sm:space-x-2 space-y-2 sm:space-y-0">
       <input type="text" id="new-name" placeholder="เพิ่มชื่อใหม่"
-        class="flex-1 px-3 py-2 border border-gray-300 bg-gray-100 text-gray-800 rounded-md" />
+        class="w-full px-3 py-2 border border-gray-600 bg-gray-700 text-white rounded-md" />
       <input type="text" id="new-lastname" placeholder="เพิ่มนามสกุล"
-        class="flex-1 px-3 py-2 border border-gray-300 bg-gray-100 text-gray-800 rounded-md" />
-      <button id="add-button" onclick="addPerson()" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-md">เพิ่ม</button>
+        class="w-full px-3 py-2 border border-gray-600 bg-gray-700 text-white rounded-md" />
+      <button id="add-button" onclick="addPerson()" class="w-full sm:w-auto bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-md">
+        เพิ่ม
+      </button>
     </div>
 
     <!-- รายชื่อ -->
     <ul id="people-list" class="space-y-2">
-      <li class="text-gray-500">กำลังโหลด...</li>
+      <li class="text-gray-400">กำลังโหลด...</li>
     </ul>
   </div>
 
@@ -66,7 +68,7 @@
         .select('id, scamname, scamlastname');
 
       if (error) {
-        document.getElementById('people-list').innerHTML = `<li class="text-red-500">${error.message}</li>`;
+        document.getElementById('people-list').innerHTML = `<li class="text-red-400">${error.message}</li>`;
         return;
       }
 
@@ -79,25 +81,27 @@
       list.innerHTML = '';
 
       if (data.length === 0) {
-        list.innerHTML = '<li class="text-gray-500">ไม่มีข้อมูล</li>';
+        list.innerHTML = '<li class="text-gray-400">ไม่มีข้อมูล</li>';
         return;
       }
 
       data.forEach(person => {
         const li = document.createElement('li');
-        li.className = "bg-gray-100 p-3 rounded-md border border-gray-300 text-gray-800 flex justify-between items-center";
+        li.className = "bg-gray-700 p-3 rounded-md border border-gray-600 text-white";
 
-        let html = `<span>${person.scamname} ${person.scamlastname}</span>`;
+        let html = `
+          <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center">
+            <span class="text-lg">${person.scamname} ${person.scamlastname}</span>`;
 
-        // ✅ แสดงปุ่มลบเฉพาะตอนที่ล็อกอินแล้วเท่านั้น
         if (currentUser) {
           html += `
             <button onclick="deletePerson(${person.id})"
-              class="bg-red-500 hover:bg-red-600 text-white px-2 py-1 rounded-md text-sm ml-4">
+              class="mt-2 sm:mt-0 bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded-md text-sm self-start sm:self-auto">
               ลบ
             </button>`;
         }
 
+        html += `</div>`;
         li.innerHTML = html;
         list.appendChild(li);
       });
@@ -173,8 +177,7 @@
       document.getElementById('login-section').classList.remove('hidden');
       document.getElementById('user-info').classList.add('hidden');
       document.getElementById('add-section').classList.add('hidden');
-      document.getElementById('people-list').innerHTML = '<li class="text-gray-500">กำลังโหลด...</li>';
-      loadPeople();
+      document.getElementById('people-list').innerHTML = '<li class="text-gray-400">กำลังโหลด...</li>';
     }
 
     loadPeople();
