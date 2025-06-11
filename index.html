@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="th">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
@@ -9,11 +9,11 @@
 <body>
   <h1>รายชื่อในฐานข้อมูล</h1>
   <ul id="people-list">
-    
+    <li>กำลังโหลด...</li>
   </ul>
 
   <script>
-    // ใส่ SUPABASE URL และ ANON KEY ของคุณ
+    // Supabase URL & Key
     const SUPABASE_URL = 'https://pklvscffpbapogezoxyn.supabase.co';
     const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBrbHZzY2ZmcGJhcG9nZXpveHluIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDk1NTIxNTYsImV4cCI6MjA2NTEyODE1Nn0.O0cXyJAo0qdbNZsLqK1zpo1lS1H1mrudaGz2VaEQQaM';
 
@@ -23,24 +23,27 @@
       const listElement = document.getElementById('people-list');
       listElement.innerHTML = '<li>กำลังโหลด...</li>';
 
-      let { data, error } = await supabase
-        .from('scammer')        // ชื่อตาราง
-        .select('scamname');       // คอลัมน์ที่ต้องการแสดง
+      // ดึงข้อมูลจากตาราง scammer
+      const { data, error } = await supabase
+        .from('scammer')
+        .select('scamname');
+
+      console.log("ผลลัพธ์จาก Supabase:", data, error);
 
       if (error) {
         listElement.innerHTML = `<li>เกิดข้อผิดพลาด: ${error.message}</li>`;
         return;
       }
 
-      if (data.length === 0) {
+      if (!data || data.length === 0) {
         listElement.innerHTML = '<li>ไม่มีข้อมูล</li>';
         return;
       }
 
       listElement.innerHTML = '';
-      data.forEach(person => {
+      data.forEach(row => {
         const li = document.createElement('li');
-        li.textContent = person.scamname;
+        li.textContent = row.scamname;
         listElement.appendChild(li);
       });
     }
