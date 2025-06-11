@@ -198,7 +198,7 @@
       const { data, error } = await supabaseClient
         .from('scammer')
         .update({ scamname: newName.trim(), scamlastname: newLastname.trim() })
-        .eq('id', id)
+        .eq(id, id)
         .select(); // สำคัญเพื่อดูผลลัพธ์
     
       if (error) {
