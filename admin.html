@@ -193,20 +193,26 @@
     }
     
     async function saveEdit(id, newName, newLastname) {
-      console.log("DEBUG:", id, newName, newLastname);
+      newName = newName.trim();
+      newLastname = newLastname.trim();
+    
+      console.log("DEBUG: id =", id, "name =", newName, "lastname =", newLastname);
     
       const { data, error } = await supabaseClient
         .from('scammer')
-        .update({ scamname: newName.trim(), scamlastname: newLastname.trim() })
-        .eq(id, id)
-        .select(); // สำคัญเพื่อดูผลลัพธ์
+        .update({
+          scamname: newName,
+          scamlastname: newLastname
+        })
+        .eq('id', id.toString()) // 💡 แปลงเป็น string เผื่อ Supabase ใช้ UUID หรือ text
+        .select();
     
       if (error) {
         alert('บันทึกไม่สำเร็จ: ' + error.message);
         return;
       }
     
-      if (data.length === 0) {
+      if (!data || data.length === 0) {
         alert("ไม่พบข้อมูลที่ต้องการแก้ไข");
         return;
       }
