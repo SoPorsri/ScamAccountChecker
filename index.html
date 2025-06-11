@@ -7,20 +7,20 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-gray-900 text-gray-100">
-  <div class="max-w-2xl mx-auto mt-10 p-6 bg-gray-800 shadow-md rounded-xl">
-    <h1 class="text-2xl font-bold mb-4 text-center text-white">📋 รายชื่อผู้ต้องสงสัย</h1>
+<body class="bg-gray-100 text-gray-900">
+  <div class="max-w-2xl mx-auto mt-10 p-6 bg-gray-200 shadow-md rounded-xl">
+    <h1 class="text-2xl font-bold mb-4 text-center text-gray-800">📋 รายชื่อผู้ต้องสงสัย</h1>
 
     <!-- 🔍 ค้นหา -->
     <div class="mb-4">
       <input type="text" id="search" placeholder="🔍 ค้นหาชื่อหรือนามสกุล..."
-        class="w-full px-3 py-2 border border-gray-600 bg-gray-700 text-white rounded-md placeholder-gray-400" />
+        class="w-full px-3 py-2 border border-gray-400 bg-gray-100 text-gray-800 rounded-md placeholder-gray-500" />
     </div>
 
     <!-- 🔳 โซนเทา + รายชื่อ -->
-    <div class="bg-gray-700 p-4 rounded-lg">
+    <div class="bg-gray-100 p-4 rounded-lg border border-gray-300">
       <ul id="people-list" class="space-y-2">
-        <li class="text-gray-300">กำลังโหลด...</li>
+        <li class="text-gray-600">กำลังโหลด...</li>
       </ul>
     </div>
   </div>
@@ -39,7 +39,7 @@
         .select('id, scamname, scamlastname');
 
       if (error) {
-        document.getElementById('people-list').innerHTML = `<li class="text-red-400">${error.message}</li>`;
+        document.getElementById('people-list').innerHTML = `<li class="text-red-500">${error.message}</li>`;
         return;
       }
 
@@ -52,13 +52,13 @@
       list.innerHTML = '';
 
       if (data.length === 0) {
-        list.innerHTML = '<li class="text-gray-400">ไม่มีข้อมูล</li>';
+        list.innerHTML = '<li class="text-gray-500">ไม่มีข้อมูล</li>';
         return;
       }
 
       data.forEach(person => {
         const li = document.createElement('li');
-        li.className = "bg-gray-800 p-3 rounded-md border border-gray-600 text-white";
+        li.className = "bg-white p-3 rounded-md border border-gray-300 text-gray-800";
         li.textContent = `${person.scamname} ${person.scamlastname}`;
         list.appendChild(li);
       });
