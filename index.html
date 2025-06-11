@@ -8,45 +8,88 @@
 </head>
 <body>
   <h1>รายชื่อในฐานข้อมูล</h1>
+
+  <!-- 🔍 ค้นหา -->
+  <input type="text" id="search" placeholder="ค้นหารายชื่อ..." />
+
+  <!-- ➕ เพิ่มรายชื่อ -->
+  <input type="text" id="new-name" placeholder="เพิ่มชื่อใหม่" />
+  <button onclick="addPerson()">เพิ่มชื่อ</button>
+
   <ul id="people-list">
     <li>กำลังโหลด...</li>
   </ul>
 
   <script>
-    // Supabase URL & Key
     const SUPABASE_URL = 'https://pklvscffpbapogezoxyn.supabase.co';
-    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBrbHZzY2ZmcGJhcG9nZXpveHluIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDk1NTIxNTYsImV4cCI6MjA2NTEyODE1Nn0.O0cXyJAo0qdbNZsLqK1zpo1lS1H1mrudaGz2VaEQQaM'; // ตัดสั้นเพื่อความปลอดภัย
+    const SUPABASE_KEY = 'ใส่คีย์ของคุณตรงนี้';
+    const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    // ✅ สร้าง client อย่างถูกต้อง
-    const { createClient } = supabase;
-    const supabaseClient = createClient(SUPABASE_URL, SUPABASE_KEY);
+    let allPeople = [];
 
     async function loadPeople() {
-      const listElement = document.getElementById('people-list');
-      listElement.innerHTML = '<li>กำลังโหลด...</li>';
-
-      const { data, error } = await supabaseClient
-        .from('scammer')
-        .select('scamname');
-
-      console.log("ผลลัพธ์จาก Supabase:", data, error);
-
+      const { data, error } = await supabase.from('scammer').select('*');
       if (error) {
-        listElement.innerHTML = `<li>เกิดข้อผิดพลาด: ${error.message}</li>`;
+        document.getElementById('people-list').innerHTML = `<li>เกิดข้อผิดพลาด: ${error.message}</li>`;
+        return;
+      }
+      allPeople = data;
+      showPeople(data);
+    }
+
+    function showPeople(data) {
+      const list = document.getElementById('people-list');
+      list.innerHTML = '';
+      if (data.length === 0) {
+        list.innerHTML = '<li>ไม่มีข้อมูล</li>';
         return;
       }
 
-      if (!data || data.length === 0) {
-        listElement.innerHTML = '<li>ไม่มีข้อมูล</li>';
-        return;
-      }
-
-      listElement.innerHTML = '';
-      data.forEach(row => {
+      data.forEach(person => {
         const li = document.createElement('li');
-        li.textContent = row.scamname;
-        listElement.appendChild(li);
+        li.textContent = person.scamname;
+
+        // 🗑 ปุ่มลบ
+        const delBtn = document.createElement('button');
+        delBtn.textContent = 'ลบ';
+        delBtn.style.marginLeft = '10px';
+        delBtn.onclick = () => deletePerson(person.id);
+        li.appendChild(delBtn);
+
+        list.appendChild(li);
       });
+    }
+
+    // 🔍 ค้นหา
+    document.getElementById('search').addEventListener('input', function() {
+      const keyword = this.value.toLowerCase();
+      const filtered = allPeople.filter(p => p.scamname.toLowerCase().includes(keyword));
+      showPeople(filtered);
+    });
+
+    // ➕ เพิ่มชื่อ
+    async function addPerson() {
+      const name = document.getElementById('new-name').value.trim();
+      if (!name) return;
+
+      const { error } = await supabase.from('scammer').insert([{ scamname: name }]);
+      if (error) {
+        alert('เกิดข้อผิดพลาด: ' + error.message);
+        return;
+      }
+
+      document.getElementById('new-name').value = '';
+      await loadPeople();
+    }
+
+    // 🗑 ลบชื่อ
+    async function deletePerson(id) {
+      const { error } = await supabase.from('scammer').delete().eq('id', id);
+      if (error) {
+        alert('ลบไม่สำเร็จ: ' + error.message);
+        return;
+      }
+      await loadPeople();
     }
 
     loadPeople();
