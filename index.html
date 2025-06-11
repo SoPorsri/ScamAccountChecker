@@ -15,40 +15,18 @@
   <script>
     // Supabase URL & Key
     const SUPABASE_URL = 'https://pklvscffpbapogezoxyn.supabase.co';
-    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBrbHZzY2ZmcGJhcG9nZXpveHluIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDk1NTIxNTYsImV4cCI6MjA2NTEyODE1Nn0.O0cXyJAo0qdbNZsLqK1zpo1lS1H1mrudaGz2VaEQQaM';
+    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.ey...'; // ตัดสั้นเพื่อความปลอดภัย
 
-    const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    // ✅ สร้าง client อย่างถูกต้อง
+    const { createClient } = supabase;
+    const supabaseClient = createClient(SUPABASE_URL, SUPABASE_KEY);
 
     async function loadPeople() {
       const listElement = document.getElementById('people-list');
       listElement.innerHTML = '<li>กำลังโหลด...</li>';
 
-      // ดึงข้อมูลจากตาราง scammer
-      const { data, error } = await supabase
+      const { data, error } = await supabaseClient
         .from('scammer')
         .select('scamname');
 
       console.log("ผลลัพธ์จาก Supabase:", data, error);
-
-      if (error) {
-        listElement.innerHTML = `<li>เกิดข้อผิดพลาด: ${error.message}</li>`;
-        return;
-      }
-
-      if (!data || data.length === 0) {
-        listElement.innerHTML = '<li>ไม่มีข้อมูล</li>';
-        return;
-      }
-
-      listElement.innerHTML = '';
-      data.forEach(row => {
-        const li = document.createElement('li');
-        li.textContent = row.scamname;
-        listElement.appendChild(li);
-      });
-    }
-
-    loadPeople();
-  </script>
-</body>
-</html>
