@@ -297,13 +297,18 @@
         alert("เข้าสู่ระบบล้มเหลว: " + error.message);
         return;
       }
-
-      currentUser = data.user;
-      document.getElementById('user-name').textContent = `สวัสดี, ${currentUser.email}`;
-      document.getElementById('login-section').classList.add('hidden');
-      document.getElementById('user-info').classList.remove('hidden');
-      document.getElementById('add-section').classList.remove('hidden');
-      loadPeople();
+      
+      supabaseClient.auth.getSession().then(({ data: { session } }) => {
+        if (session && session.user) {
+          currentUser = session.user;
+          document.getElementById('user-name').textContent = `สวัสดี, ${currentUser.email}`;
+          document.getElementById('login-section').classList.add('hidden');
+          document.getElementById('user-info').classList.remove('hidden');
+          document.getElementById('add-section').classList.remove('hidden');
+        }
+        loadPeople();
+      });
+      
     }
 
     async function logout() {
