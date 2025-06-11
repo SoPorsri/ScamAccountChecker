@@ -159,11 +159,16 @@ nameSpan.innerHTML = html;
         return;
       }
     
+      const saveadmin = currentUser?.email || 'unknown'; // ใช้ email ผู้ล็อกอิน
+      const savetime = new Date().toISOString();         // เวลาแบบ ISO
+    
       const { error } = await supabaseClient.from('scammer').insert([{
         scamname: name,
         scamlastname: lastname,
         informer: informer,
-        url_informer: url
+        url_informer: url,
+        saveadmin: saveadmin,
+        savetime: savetime
       }]);
     
       if (error) {
@@ -171,7 +176,7 @@ nameSpan.innerHTML = html;
         return;
       }
     
-      // ล้างช่อง input
+      // ล้างฟอร์ม
       document.getElementById('new-name').value = '';
       document.getElementById('new-lastname').value = '';
       document.getElementById('informer').value = '';
