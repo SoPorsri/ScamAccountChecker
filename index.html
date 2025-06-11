@@ -76,7 +76,7 @@
       const name = document.getElementById('new-name').value.trim();
       if (!name) return;
 
-      const { error } = await supabase.from('scammer').insert([{ scamname: name }]);
+      const { error } = await supabaseClient.from('scammer').insert([{ scamname: name }]);
       if (error) {
         alert('เกิดข้อผิดพลาด: ' + error.message);
         return;
@@ -88,7 +88,7 @@
 
     // 🗑 ลบชื่อ
     async function deletePerson(id) {
-      const { error } = await supabase.from('scammer').delete().eq('id', id);
+      const { error } = await supabaseClient.from('scammer').delete().eq('id', id);
       if (error) {
         alert('ลบไม่สำเร็จ: ' + error.message);
         return;
