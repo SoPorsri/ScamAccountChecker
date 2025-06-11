@@ -1,40 +1,51 @@
-<!-- index.html -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>People List</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+</head>
+<body>
+  <h1>รายชื่อในฐานข้อมูล</h1>
+  <ul id="people-list">
+    <li>กำลังโหลด...</li>
+  </ul>
 
-<script>
-  const SUPABASE_URL = 'https://pklvscffpbapogezoxyn.supabase.co'; // 👈 เปลี่ยนตามจริง
-  const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBrbHZzY2ZmcGJhcG9nZXpveHluIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDk1NTIxNTYsImV4cCI6MjA2NTEyODE1Nn0.O0cXyJAo0qdbNZsLqK1zpo1lS1H1mrudaGz2VaEQQaM';              // 👈 เปลี่ยนตามจริง
+  <script>
+    // ใส่ SUPABASE URL และ ANON KEY ของคุณ
+    const SUPABASE_URL = 'https://pklvscffpbapogezoxyn.supabase.co';
+    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBrbHZzY2ZmcGJhcG9nZXpveHluIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDk1NTIxNTYsImV4cCI6MjA2NTEyODE1Nn0.O0cXyJAo0qdbNZsLqK1zpo1lS1H1mrudaGz2VaEQQaM';
 
-  const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-  async function saveUserToSupabase(user) {
-    const { data, error } = await supabase
-      .from('users')
-      .insert([{
-        login: user.login,
-        avatar_url: user.avatar_url,
-        html_url: user.html_url
-      }]);
+    async function loadPeople() {
+      const listElement = document.getElementById('people-list');
+      listElement.innerHTML = '<li>กำลังโหลด...</li>';
 
-    if (error) {
-      console.error('❌ บันทึกล้มเหลว:', error);
-      alert("บันทึกล้มเหลว!");
-    } else {
-      console.log('✅ บันทึกสำเร็จ:', data);
-      alert("บันทึกสำเร็จ!");
+      let { data, error } = await supabase
+        .from('scammer')        // ชื่อตาราง
+        .select('scamname');       // คอลัมน์ที่ต้องการแสดง
+
+      if (error) {
+        listElement.innerHTML = `<li>เกิดข้อผิดพลาด: ${error.message}</li>`;
+        return;
+      }
+
+      if (data.length === 0) {
+        listElement.innerHTML = '<li>ไม่มีข้อมูล</li>';
+        return;
+      }
+
+      listElement.innerHTML = '';
+      data.forEach(person => {
+        const li = document.createElement('li');
+        li.textContent = person.name;
+        listElement.appendChild(li);
+      });
     }
-  }
 
-  // เมื่อ fetch GitHub แล้ว เพิ่มปุ่ม "บันทึกลงฐานข้อมูล"
-  function renderGitHubUsers(users) {
-    results.innerHTML = users.map(user => `
-      <div class="user-card">
-        <a href="${user.html_url}" target="_blank">
-          <img src="${user.avatar_url}" alt="${user.login}" />
-          <p>${user.login}</p>
-        </a>
-        <button class="save-btn" onclick='saveUserToSupabase(${JSON.stringify(user)})'>บันทึกลงฐานข้อมูล</button>
-      </div>
-    `).join('');
-  }
-</script>
+    loadPeople();
+  </script>
+</body>
+</html>
