@@ -31,7 +31,7 @@
     let allPeople = [];
 
    async function loadPeople() {
-      const { data, error } = await supabase.from('scammer').select('id,scamname,scamlastname');
+      const { data, error } = await supabaseClient.from('scammer').select('id,scamname,scamlastname');
       console.log("ERROR", error); // 👈 เพิ่มตรงนี้
       if (error) {
         document.getElementById('people-list').innerHTML = `<li>เกิดข้อผิดพลาด: ${error.message}</li>`;
