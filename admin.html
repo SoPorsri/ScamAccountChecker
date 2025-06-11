@@ -116,9 +116,12 @@
 
     // 🔐 เข้าสู่ระบบ
     async function login() {
-      const { user, error } = await supabaseClient.auth.signIn({
-        provider: 'google', // หรือคุณสามารถใช้ provider อื่นๆ เช่น email, github
+      const { data, error } = await supabaseClient.auth.signInWithPassword({
+        email: emailInput.value,
+        password: passwordInput.value
       });
+
+      
 
       if (error) {
         alert("เข้าสู่ระบบล้มเหลว: " + error.message);
