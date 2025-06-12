@@ -8,26 +8,26 @@
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-cover bg-center min-h-screen text-gray-100"
-      style="background-image: url('https://pklvscffpbapogezoxyn.supabase.co/storage/v1/object/public/scammer-photos//scammer-admin-bg-cyber-dark.png'); background-size: contain;">
-  <div class="bg-black bg-opacity-80 min-h-screen p-4 backdrop-blur-sm">
-    <div class="max-w-2xl mx-auto mt-10 p-4 sm:p-6 bg-white/95 backdrop-blur-md shadow-2xl rounded-2xl text-gray-900">
-      <h1 class="text-2xl font-bold mb-4 text-center text-gray-800">🕵️‍♂️ รายชื่อมิจฉาชีพ - Admin</h1>
+      style="background-image: url('https://pklvscffpbapogezoxyn.supabase.co/storage/v1/object/public/scammer-photos/scammer-admin-bg-cyber-dark.png'); background-size: cover;">
+  <div class="bg-gray-950 bg-opacity-90 min-h-screen p-4">
+    <div class="max-w-2xl mx-auto mt-10 p-6 sm:p-8 bg-gray-900 bg-opacity-90 backdrop-blur-md shadow-2xl rounded-2xl text-gray-100">
+      <h1 class="text-2xl font-bold mb-4 text-center text-white">🕵️‍♂️ รายชื่อมิจฉาชีพ - Admin</h1>
 
       <!-- 🔐 ฟอร์มเข้าสู่ระบบ -->
       <div id="login-section" class="mb-4 space-y-2">
         <input type="email" id="emailInput" placeholder="อีเมล"
-          class="w-full px-3 py-2 border border-gray-400 bg-gray-100 text-gray-800 rounded-md placeholder-gray-500" />
+          class="w-full px-3 py-2 border border-gray-700 bg-gray-800 text-gray-100 rounded-md placeholder-gray-400" />
         <input type="password" id="passwordInput" placeholder="รหัสผ่าน"
-          class="w-full px-3 py-2 border border-gray-400 bg-gray-100 text-gray-800 rounded-md placeholder-gray-500" />
-        <button onclick="login()" class="w-full bg-blue-500 hover:bg-blue-600 text-white py-2 rounded-md">
+          class="w-full px-3 py-2 border border-gray-700 bg-gray-800 text-gray-100 rounded-md placeholder-gray-400" />
+        <button onclick="login()" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-md">
           เข้าสู่ระบบ
         </button>
       </div>
 
       <!-- 👤 แสดงข้อมูลผู้ใช้ -->
       <div id="user-info" class="hidden mb-4">
-        <p id="user-name" class="text-gray-800 mb-2"></p>
-        <button onclick="logout()" class="w-full bg-red-500 hover:bg-red-600 text-white py-2 rounded-md">
+        <p id="user-name" class="text-gray-300 mb-2"></p>
+        <button onclick="logout()" class="w-full bg-red-600 hover:bg-red-700 text-white py-2 rounded-md">
           ออกจากระบบ
         </button>
       </div>
@@ -35,21 +35,21 @@
       <!-- 🔍 ค้นหา -->
       <div class="mb-4">
         <input type="text" id="search" placeholder="🔍 ค้นหาชื่อหรือนามสกุล..."
-          class="w-full px-3 py-2 border border-gray-400 bg-gray-100 text-gray-800 rounded-md placeholder-gray-500" />
+          class="w-full px-3 py-2 border border-gray-700 bg-gray-800 text-gray-100 rounded-md placeholder-gray-400" />
       </div>
 
       <!-- ➕ เพิ่มรายชื่อ -->
       <div id="add-section" class="hidden mb-4 space-y-2">
         <input type="text" id="new-name" placeholder="เพิ่มชื่อใหม่"
-          class="w-full px-3 py-2 border border-gray-400 bg-gray-100 text-gray-800 rounded-md" />
+          class="w-full px-3 py-2 border border-gray-700 bg-gray-800 text-gray-100 rounded-md" />
         <input type="text" id="new-lastname" placeholder="เพิ่มนามสกุล"
-          class="w-full px-3 py-2 border border-gray-400 bg-gray-100 text-gray-800 rounded-md" />
+          class="w-full px-3 py-2 border border-gray-700 bg-gray-800 text-gray-100 rounded-md" />
         <input type="text" id="informer" placeholder="ชื่อผู้แจ้ง"
-          class="w-full px-3 py-2 border border-gray-400 bg-gray-100 text-gray-800 rounded-md" />
+          class="w-full px-3 py-2 border border-gray-700 bg-gray-800 text-gray-100 rounded-md" />
         <input type="text" id="url-informer" placeholder="ลิงก์ Facebook ผู้แจ้ง"
-          class="w-full px-3 py-2 border border-gray-400 bg-gray-100 text-gray-800 rounded-md" />
+          class="w-full px-3 py-2 border border-gray-700 bg-gray-800 text-gray-100 rounded-md" />
         <textarea id="detail" placeholder="รายละเอียดเพิ่มเติม"
-          class="w-full px-3 py-2 border border-gray-400 bg-gray-100 text-gray-800 rounded-md" rows="3"></textarea>
+          class="w-full px-3 py-2 border border-gray-700 bg-gray-800 text-gray-100 rounded-md" rows="3"></textarea>
         <button onclick="addPerson()"
           class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-md font-semibold">
           ➕ เพิ่มรายชื่อ
@@ -58,7 +58,7 @@
 
       <!-- รายชื่อ -->
       <ul id="people-list" class="space-y-2">
-        <li class="text-gray-600">กำลังโหลด...</li>
+        <li class="text-gray-400">กำลังโหลด...</li>
       </ul>
     </div>
   </div>
@@ -89,13 +89,13 @@ const SUPABASE_URL = 'https://pklvscffpbapogezoxyn.supabase.co';
           list.innerHTML = '';
         
           if (data.length === 0) {
-            list.innerHTML = '<li class="text-gray-400">ไม่มีข้อมูล</li>';
+            list.innerHTML = '<li class="text-gray-500">ไม่มีข้อมูล</li>';
             return;
           }
         
           data.forEach(person => {
             const li = document.createElement('li');
-            li.className = "bg-gray-800 p-4 rounded-xl shadow border border-gray-700 text-gray-100";
+            li.className = "bg-white p-4 rounded-xl shadow border border-gray-200";
         
             const container = document.createElement('div');
             container.className = "space-y-2";
@@ -103,20 +103,20 @@ const SUPABASE_URL = 'https://pklvscffpbapogezoxyn.supabase.co';
             let isEditing = false;
         
             const name = document.createElement('h2');
-            name.className = "text-xl font-semibold text-white";
+            name.className = "text-xl font-semibold text-gray-800";
             name.textContent = `${person.scamname} ${person.scamlastname}`;
         
             const detail = document.createElement('p');
-            detail.className = "text-gray-300 text-sm";
+            detail.className = "text-gray-700 text-sm";
             if (person.detail) {
               detail.innerHTML = `📝 <span class="font-medium">รายละเอียด:</span> ${person.detail}`;
             }
         
             const informer = document.createElement('p');
-            informer.className = "text-gray-400 text-sm";
+            informer.className = "text-gray-600 text-sm";
             if (person.informer) {
               informer.innerHTML = `👤 <span class="font-medium">ผู้แจ้ง:</span> ${person.informer} | 
-                <a href="${person.url_informer}" target="_blank" class="text-blue-400 underline">FB</a>`;
+                <a href="${person.url_informer}" target="_blank" class="text-blue-600 underline">FB</a>`;
             }
         
             container.appendChild(name);
@@ -129,46 +129,50 @@ const SUPABASE_URL = 'https://pklvscffpbapogezoxyn.supabase.co';
         
               const deleteBtn = document.createElement('button');
               deleteBtn.textContent = 'ลบ';
-              deleteBtn.className = "bg-red-600 hover:bg-red-700 text-white px-4 py-1 rounded-md text-sm";
+              deleteBtn.className = "bg-red-500 hover:bg-red-600 text-white px-4 py-1 rounded-md text-sm";
               deleteBtn.onclick = () => deletePerson(person.id);
         
               const editBtn = document.createElement('button');
               editBtn.textContent = 'แก้ไข';
               editBtn.className = "bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-1 rounded-md text-sm";
+        
               editBtn.onclick = () => {
                 if (isEditing) return;
                 isEditing = true;
         
+                // Clear current container
                 container.innerHTML = '';
         
+                // Create inputs
                 const nameInput = document.createElement('input');
                 nameInput.value = person.scamname;
-                nameInput.className = "w-full px-2 py-1 border rounded-md bg-gray-900 text-white";
+                nameInput.className = "w-full px-2 py-1 border rounded-md";
         
                 const lastnameInput = document.createElement('input');
                 lastnameInput.value = person.scamlastname;
-                lastnameInput.className = "w-full px-2 py-1 border rounded-md bg-gray-900 text-white";
+                lastnameInput.className = "w-full px-2 py-1 border rounded-md";
         
                 const informerInput = document.createElement('input');
                 informerInput.value = person.informer || '';
-                informerInput.className = "w-full px-2 py-1 border rounded-md bg-gray-900 text-white";
+                informerInput.className = "w-full px-2 py-1 border rounded-md";
         
                 const urlInput = document.createElement('input');
                 urlInput.value = person.url_informer || '';
-                urlInput.className = "w-full px-2 py-1 border rounded-md bg-gray-900 text-white";
+                urlInput.className = "w-full px-2 py-1 border rounded-md";
         
                 const detailInput = document.createElement('textarea');
                 detailInput.value = person.detail || '';
-                detailInput.className = "w-full px-2 py-1 border rounded-md bg-gray-900 text-white";
+                detailInput.className = "w-full px-2 py-1 border rounded-md";
                 detailInput.rows = 2;
         
+                // Save and cancel buttons
                 const saveBtn = document.createElement('button');
                 saveBtn.textContent = 'บันทึก';
                 saveBtn.className = "bg-green-600 hover:bg-green-700 text-white px-4 py-1 rounded-md text-sm";
         
                 const cancelBtn = document.createElement('button');
                 cancelBtn.textContent = 'ยกเลิก';
-                cancelBtn.className = "bg-gray-500 hover:bg-gray-600 text-white px-4 py-1 rounded-md text-sm";
+                cancelBtn.className = "bg-gray-400 hover:bg-gray-500 text-white px-4 py-1 rounded-md text-sm";
         
                 saveBtn.onclick = async () => {
                   const { error } = await supabase
