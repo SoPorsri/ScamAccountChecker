@@ -95,7 +95,7 @@ const SUPABASE_URL = 'https://pklvscffpbapogezoxyn.supabase.co';
         
           data.forEach(person => {
             const li = document.createElement('li');
-            li.className = "bg-white p-4 rounded-xl shadow border border-gray-200";
+            li.className = "bg-gray-800 p-4 rounded-xl shadow border border-gray-600";
         
             const container = document.createElement('div');
             container.className = "space-y-2";
@@ -103,17 +103,17 @@ const SUPABASE_URL = 'https://pklvscffpbapogezoxyn.supabase.co';
             let isEditing = false;
         
             const name = document.createElement('h2');
-            name.className = "text-xl font-semibold text-gray-800";
+            name.className = "text-xl font-semibold text-gray-100";
             name.textContent = `${person.scamname} ${person.scamlastname}`;
         
             const detail = document.createElement('p');
-            detail.className = "text-gray-700 text-sm";
+            detail.className = "text-gray-300 text-sm";
             if (person.detail) {
               detail.innerHTML = `📝 <span class="font-medium">รายละเอียด:</span> ${person.detail}`;
             }
         
             const informer = document.createElement('p');
-            informer.className = "text-gray-600 text-sm";
+            informer.className = "text-gray-400 text-sm";
             if (person.informer) {
               informer.innerHTML = `👤 <span class="font-medium">ผู้แจ้ง:</span> ${person.informer} | 
                 <a href="${person.url_informer}" target="_blank" class="text-blue-600 underline">FB</a>`;
