@@ -46,8 +46,8 @@
         class="w-full px-3 py-2 border border-gray-400 bg-gray-100 text-gray-800 rounded-md" />
       <input type="text" id="url-informer" placeholder="ลิงก์ Facebook ผู้แจ้ง"
         class="w-full px-3 py-2 border border-gray-400 bg-gray-100 text-gray-800 rounded-md" />
-      <input type="file" id="photo" accept="image/*"
-        class="w-full px-3 py-2 border border-gray-400 bg-white text-gray-800 rounded-md" />
+      <textarea id="detail" placeholder="รายละเอียดเพิ่มเติม"
+        class="w-full px-3 py-2 border border-gray-400 bg-gray-100 text-gray-800 rounded-md" rows="3"></textarea>
       <button onclick="addPerson()"
         class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-md font-semibold">
         ➕ เพิ่มรายชื่อ
@@ -84,98 +84,96 @@
     function showPeople(data) {
       const list = document.getElementById('people-list');
       list.innerHTML = '';
-
+    
       if (data.length === 0) {
         list.innerHTML = '<li class="text-gray-500">ไม่มีข้อมูล</li>';
         return;
       }
-
+    
       data.forEach(person => {
         const li = document.createElement('li');
-        li.className = "bg-gray-50 p-3 rounded-md border border-gray-300 text-gray-800";
-
-        const div = document.createElement('div');
-        div.className = "flex flex-col sm:flex-row sm:justify-between sm:items-center space-y-2 sm:space-y-0";
-
-        const nameSpan = document.createElement('span');
-        nameSpan.className = "text-lg";
-        let html = `${person.scamname} ${person.scamlastname}`;
-
-        if (person.photo_url) {
-          html += `<br><img src="${person.photo_url}" class="w-32 h-auto rounded mt-1">`;
+        li.className = "bg-white p-4 rounded-xl shadow border border-gray-200";
+    
+        const container = document.createElement('div');
+        container.className = "space-y-2";
+    
+        // 👤 ชื่อและนามสกุล
+        const name = document.createElement('h2');
+        name.className = "text-xl font-semibold text-gray-800";
+        name.textContent = `${person.scamname} ${person.scamlastname}`;
+        container.appendChild(name);
+    
+        // 📝 รายละเอียด
+        if (person.detail) {
+          const detail = document.createElement('p');
+          detail.className = "text-gray-700 text-sm";
+          detail.innerHTML = `📝 <span class="font-medium">รายละเอียด:</span> ${person.detail}`;
+          container.appendChild(detail);
         }
-
+    
+        // 👤 ผู้แจ้ง
         if (person.informer) {
-          html += `<br><small class="text-sm text-gray-500">👤 ผู้แจ้ง: ${person.informer} | <a href="${person.url_informer}" target="_blank" class="text-blue-600 underline">FB</a></small>`;
+          const informer = document.createElement('p');
+          informer.className = "text-gray-600 text-sm";
+          informer.innerHTML = `👤 <span class="font-medium">ผู้แจ้ง:</span> ${person.informer} | 
+            <a href="${person.url_informer}" target="_blank" class="text-blue-600 underline">FB</a>`;
+          container.appendChild(informer);
         }
-
-        nameSpan.innerHTML = html;
-        div.appendChild(nameSpan);
-
+    
+        // 🔒 ปุ่มลบ (เฉพาะเมื่อเข้าสู่ระบบแล้ว)
         if (currentUser) {
-          const buttonContainer = document.createElement('div');
-          buttonContainer.className = "flex space-x-2";
-
+          const btnWrapper = document.createElement('div');
+          btnWrapper.className = "pt-2";
+    
           const deleteBtn = document.createElement('button');
           deleteBtn.textContent = 'ลบ';
-          deleteBtn.className = "bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded-md text-sm";
+          deleteBtn.className = "bg-red-500 hover:bg-red-600 text-white px-4 py-1 rounded-md text-sm";
           deleteBtn.onclick = () => deletePerson(person.id);
-
-          buttonContainer.appendChild(deleteBtn);
-          div.appendChild(buttonContainer);
+    
+          btnWrapper.appendChild(deleteBtn);
+          container.appendChild(btnWrapper);
         }
-
-        li.appendChild(div);
+    
+        li.appendChild(container);
         list.appendChild(li);
       });
     }
+
 
     async function addPerson() {
       const name = document.getElementById('new-name').value.trim();
       const lastname = document.getElementById('new-lastname').value.trim();
       const informer = document.getElementById('informer').value.trim();
       const url = document.getElementById('url-informer').value.trim();
-      const photo = document.getElementById('photo').files[0];
-
-      if (!name || !lastname || !informer || !url || !photo) {
-        alert("กรุณากรอกข้อมูลให้ครบและแนบรูปภาพ");
+      const detail = document.getElementById('detail').value.trim();
+    
+      if (!name || !lastname || !informer || !url || !detail) {
+        alert("กรุณากรอกข้อมูลให้ครบ");
         return;
       }
-
-      const filename = `${Date.now()}_${photo.name}`;
-      const { data: uploadData, error: uploadError } = await supabase.storage
-        .from('scammer-photos')
-        .upload(filename, photo);
-
-      if (uploadError) {
-        alert("อัปโหลดรูปไม่สำเร็จ: " + uploadError.message);
-        return;
-      }
-
-      const { data: urlData } = supabase.storage.from('scammer-photos').getPublicUrl(filename);
-      const publicUrl = urlData.publicUrl;
-
+    
       const { error } = await supabase.from('scammer').insert([{
         scamname: name,
         scamlastname: lastname,
         informer: informer,
         url_informer: url,
-        photo_url: publicUrl,
+        detail: detail,
         saveadmin: currentUser?.email || 'unknown',
         savetime: new Date().toISOString()
       }]);
-
+    
       if (error) {
         alert('เกิดข้อผิดพลาด: ' + error.message);
         return;
       }
-
+    
+      // เคลียร์ฟอร์ม
       document.getElementById('new-name').value = '';
       document.getElementById('new-lastname').value = '';
       document.getElementById('informer').value = '';
       document.getElementById('url-informer').value = '';
-      document.getElementById('photo').value = '';
-
+      document.getElementById('detail').value = '';
+    
       await loadPeople();
     }
 
