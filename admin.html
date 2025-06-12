@@ -16,9 +16,9 @@
       <!-- 🔐 ฟอร์มเข้าสู่ระบบ -->
       <div id="login-section" class="mb-4 space-y-2">
         <input type="email" id="emailInput" placeholder="อีเมล"
-          class="w-full px-3 py-2 border border-gray-700 bg-gray-800 text-gray-100 rounded-md placeholder-gray-400" />
+          class="w-full px-3 py-2 border border-gray-700 bg-gray-800 text-white rounded-md placeholder-gray-400" />
         <input type="password" id="passwordInput" placeholder="รหัสผ่าน"
-          class="w-full px-3 py-2 border border-gray-700 bg-gray-800 text-gray-100 rounded-md placeholder-gray-400" />
+          class="w-full px-3 py-2 border border-gray-700 bg-gray-800 text-white rounded-md placeholder-gray-400" />
         <button onclick="login()" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-md">
           เข้าสู่ระบบ
         </button>
@@ -35,21 +35,21 @@
       <!-- 🔍 ค้นหา -->
       <div class="mb-4">
         <input type="text" id="search" placeholder="🔍 ค้นหาชื่อหรือนามสกุล..."
-          class="w-full px-3 py-2 border border-gray-700 bg-gray-800 text-gray-100 rounded-md placeholder-gray-400" />
+          class="w-full px-3 py-2 border border-gray-700 bg-gray-800 text-white rounded-md placeholder-gray-400" />
       </div>
 
       <!-- ➕ เพิ่มรายชื่อ -->
       <div id="add-section" class="hidden mb-4 space-y-2">
         <input type="text" id="new-name" placeholder="เพิ่มชื่อใหม่"
-          class="w-full px-3 py-2 border border-gray-700 bg-gray-800 text-gray-100 rounded-md" />
+          class="w-full px-3 py-2 border border-gray-700 bg-gray-800 text-white rounded-md placeholder-gray-400" />
         <input type="text" id="new-lastname" placeholder="เพิ่มนามสกุล"
-          class="w-full px-3 py-2 border border-gray-700 bg-gray-800 text-gray-100 rounded-md" />
+          class="w-full px-3 py-2 border border-gray-700 bg-gray-800 text-white rounded-md placeholder-gray-400" />
         <input type="text" id="informer" placeholder="ชื่อผู้แจ้ง"
-          class="w-full px-3 py-2 border border-gray-700 bg-gray-800 text-gray-100 rounded-md" />
+          class="w-full px-3 py-2 border border-gray-700 bg-gray-800 text-white rounded-md placeholder-gray-400" />
         <input type="text" id="url-informer" placeholder="ลิงก์ Facebook ผู้แจ้ง"
-          class="w-full px-3 py-2 border border-gray-700 bg-gray-800 text-gray-100 rounded-md" />
+          class="w-full px-3 py-2 border border-gray-700 bg-gray-800 text-white rounded-md placeholder-gray-400" />
         <textarea id="detail" placeholder="รายละเอียดเพิ่มเติม"
-          class="w-full px-3 py-2 border border-gray-700 bg-gray-800 text-gray-100 rounded-md" rows="3"></textarea>
+          class="w-full px-3 py-2 border border-gray-700 bg-gray-800 text-white rounded-md placeholder-gray-400" rows="3"></textarea>
         <button onclick="addPerson()"
           class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-md font-semibold">
           ➕ เพิ่มรายชื่อ
@@ -62,7 +62,6 @@
       </ul>
     </div>
   </div>
-
 <script>
 const SUPABASE_URL = 'https://pklvscffpbapogezoxyn.supabase.co';
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBrbHZzY2ZmcGJhcG9nZXpveHluIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDk1NTIxNTYsImV4cCI6MjA2NTEyODE1Nn0.O0cXyJAo0qdbNZsLqK1zpo1lS1H1mrudaGz2VaEQQaM';
@@ -95,7 +94,7 @@ const SUPABASE_URL = 'https://pklvscffpbapogezoxyn.supabase.co';
         
           data.forEach(person => {
             const li = document.createElement('li');
-            li.className = "bg-gray-800 p-4 rounded-xl shadow border border-gray-600";
+            li.className = "bg-white p-4 rounded-xl shadow border border-gray-200";
         
             const container = document.createElement('div');
             container.className = "space-y-2";
@@ -103,17 +102,17 @@ const SUPABASE_URL = 'https://pklvscffpbapogezoxyn.supabase.co';
             let isEditing = false;
         
             const name = document.createElement('h2');
-            name.className = "text-xl font-semibold text-gray-100";
+            name.className = "text-xl font-semibold text-gray-800";
             name.textContent = `${person.scamname} ${person.scamlastname}`;
         
             const detail = document.createElement('p');
-            detail.className = "text-gray-300 text-sm";
+            detail.className = "text-gray-700 text-sm";
             if (person.detail) {
               detail.innerHTML = `📝 <span class="font-medium">รายละเอียด:</span> ${person.detail}`;
             }
         
             const informer = document.createElement('p');
-            informer.className = "text-gray-400 text-sm";
+            informer.className = "text-gray-600 text-sm";
             if (person.informer) {
               informer.innerHTML = `👤 <span class="font-medium">ผู้แจ้ง:</span> ${person.informer} | 
                 <a href="${person.url_informer}" target="_blank" class="text-blue-600 underline">FB</a>`;
