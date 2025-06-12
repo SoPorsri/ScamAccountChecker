@@ -72,7 +72,7 @@
         .select('id, scamname, scamlastname, informer, url_informer');
     
       if (error) {
-        document.getElementById('people-list').innerHTML = <li class="text-red-500">${error.message}</li>;
+        document.getElementById('people-list').innerHTML = `<li class="text-red-500">${error.message}</li>`;
         return;
       }
     
