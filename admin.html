@@ -100,14 +100,14 @@
         const nameSpan = document.createElement('span');
         nameSpan.className = "text-lg";
         
-        let html = ${person.scamname} ${person.scamlastname};
-        
+        let html = `${person.scamname} ${person.scamlastname}`;
+
         if (person.informer) {
-          html += <br>
+          html += `<br>
             <small class="text-sm text-gray-500">
               👤 ผู้แจ้ง: ${person.informer} | 
               <a href="${person.url_informer}" target="_blank" class="text-blue-600 underline">FB</a>
-            </small>;
+            </small>`;
         }
 
         nameSpan.innerHTML = html;
