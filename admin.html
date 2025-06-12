@@ -10,335 +10,333 @@
 <body class="bg-cover bg-center min-h-screen text-gray-100"
       style="background-image: url('https://pklvscffpbapogezoxyn.supabase.co/storage/v1/object/public/scammer-photos//hacker-vector.jpg');">
   <div class="bg-black bg-opacity-70 min-h-screen p-4">
-    <div class="max-w-2xl mx-auto mt-10 p-4 sm:p-6 bg-white/90 shadow-md rounded-xl text-gray-900">
-  <div class="max-w-2xl mx-auto mt-10 p-4 sm:p-6 bg-white shadow-md rounded-xl">
-    <h1 class="text-2xl font-bold mb-4 text-center text-gray-800">🕵️‍♂️ รายชื่อมิจฉาชีพ - Admin</h1>
+    <div class="max-w-2xl mx-auto mt-10 p-4 sm:p-6 bg-white/90 backdrop-blur-md shadow-lg rounded-xl text-gray-900">
+      <h1 class="text-2xl font-bold mb-4 text-center text-gray-800">🕵️‍♂️ รายชื่อมิจฉาชีพ - Admin</h1>
 
-    <!-- 🔐 ฟอร์มเข้าสู่ระบบ -->
-    <div id="login-section" class="mb-4 space-y-2">
-      <input type="email" id="emailInput" placeholder="อีเมล"
-        class="w-full px-3 py-2 border border-gray-400 bg-gray-100 text-gray-800 rounded-md placeholder-gray-500" />
-      <input type="password" id="passwordInput" placeholder="รหัสผ่าน"
-        class="w-full px-3 py-2 border border-gray-400 bg-gray-100 text-gray-800 rounded-md placeholder-gray-500" />
-      <button onclick="login()" class="w-full bg-blue-500 hover:bg-blue-600 text-white py-2 rounded-md">
-        เข้าสู่ระบบ
-      </button>
-    </div>
-
-    <!-- 👤 แสดงข้อมูลผู้ใช้ -->
-    <div id="user-info" class="hidden mb-4">
-      <p id="user-name" class="text-gray-800 mb-2"></p>
-      <button onclick="logout()" class="w-full bg-red-500 hover:bg-red-600 text-white py-2 rounded-md">
-        ออกจากระบบ
-      </button>
-    </div>
-
-    <!-- 🔍 ค้นหา -->
-    <div class="mb-4">
-      <input type="text" id="search" placeholder="🔍 ค้นหาชื่อหรือนามสกุล..."
-        class="w-full px-3 py-2 border border-gray-400 bg-gray-100 text-gray-800 rounded-md placeholder-gray-500" />
-    </div>
-
-    <!-- ➕ เพิ่มรายชื่อ -->
-    <div id="add-section" class="hidden mb-4 space-y-2">
-      <input type="text" id="new-name" placeholder="เพิ่มชื่อใหม่"
-        class="w-full px-3 py-2 border border-gray-400 bg-gray-100 text-gray-800 rounded-md" />
-      <input type="text" id="new-lastname" placeholder="เพิ่มนามสกุล"
-        class="w-full px-3 py-2 border border-gray-400 bg-gray-100 text-gray-800 rounded-md" />
-      <input type="text" id="informer" placeholder="ชื่อผู้แจ้ง"
-        class="w-full px-3 py-2 border border-gray-400 bg-gray-100 text-gray-800 rounded-md" />
-      <input type="text" id="url-informer" placeholder="ลิงก์ Facebook ผู้แจ้ง"
-        class="w-full px-3 py-2 border border-gray-400 bg-gray-100 text-gray-800 rounded-md" />
-      <textarea id="detail" placeholder="รายละเอียดเพิ่มเติม"
-        class="w-full px-3 py-2 border border-gray-400 bg-gray-100 text-gray-800 rounded-md" rows="3"></textarea>
-      <button onclick="addPerson()"
-        class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-md font-semibold">
-        ➕ เพิ่มรายชื่อ
-      </button>
-    </div>
-
-    <!-- รายชื่อ -->
-    <ul id="people-list" class="space-y-2">
-      <li class="text-gray-600">กำลังโหลด...</li>
-    </ul>
-  </div>
-
-  <script>
-    const SUPABASE_URL = 'https://pklvscffpbapogezoxyn.supabase.co';
-    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBrbHZzY2ZmcGJhcG9nZXpveHluIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDk1NTIxNTYsImV4cCI6MjA2NTEyODE1Nn0.O0cXyJAo0qdbNZsLqK1zpo1lS1H1mrudaGz2VaEQQaM';
-    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-
-    let allPeople = [];
-    let currentUser = null;
-
-    async function loadPeople() {
-      const { data, error } = await supabase.from('scammer').select('*');
-      const list = document.getElementById('people-list');
-
-      if (error) {
-        list.innerHTML = `<li class="text-red-500">${error.message}</li>`;
-        return;
-      }
-
-      allPeople = data;
-      showPeople(data);
-    }
-
-    function showPeople(data) {
-      const list = document.getElementById('people-list');
-      list.innerHTML = '';
-    
-      if (data.length === 0) {
-        list.innerHTML = '<li class="text-gray-500">ไม่มีข้อมูล</li>';
-        return;
-      }
-    
-      data.forEach(person => {
-        const li = document.createElement('li');
-        li.className = "bg-white p-4 rounded-xl shadow border border-gray-200";
-    
-        const container = document.createElement('div');
-        container.className = "space-y-2";
-    
-        let isEditing = false;
-    
-        const name = document.createElement('h2');
-        name.className = "text-xl font-semibold text-gray-800";
-        name.textContent = `${person.scamname} ${person.scamlastname}`;
-    
-        const detail = document.createElement('p');
-        detail.className = "text-gray-700 text-sm";
-        if (person.detail) {
-          detail.innerHTML = `📝 <span class="font-medium">รายละเอียด:</span> ${person.detail}`;
-        }
-    
-        const informer = document.createElement('p');
-        informer.className = "text-gray-600 text-sm";
-        if (person.informer) {
-          informer.innerHTML = `👤 <span class="font-medium">ผู้แจ้ง:</span> ${person.informer} | 
-            <a href="${person.url_informer}" target="_blank" class="text-blue-600 underline">FB</a>`;
-        }
-    
-        container.appendChild(name);
-        if (person.detail) container.appendChild(detail);
-        if (person.informer) container.appendChild(informer);
-    
-        if (currentUser) {
-          const btnWrapper = document.createElement('div');
-          btnWrapper.className = "pt-2 flex space-x-2";
-    
-          const deleteBtn = document.createElement('button');
-          deleteBtn.textContent = 'ลบ';
-          deleteBtn.className = "bg-red-500 hover:bg-red-600 text-white px-4 py-1 rounded-md text-sm";
-          deleteBtn.onclick = () => deletePerson(person.id);
-    
-          const editBtn = document.createElement('button');
-          editBtn.textContent = 'แก้ไข';
-          editBtn.className = "bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-1 rounded-md text-sm";
-    
-          editBtn.onclick = () => {
-            if (isEditing) return;
-            isEditing = true;
-    
-            // Clear current container
-            container.innerHTML = '';
-    
-            // Create inputs
-            const nameInput = document.createElement('input');
-            nameInput.value = person.scamname;
-            nameInput.className = "w-full px-2 py-1 border rounded-md";
-    
-            const lastnameInput = document.createElement('input');
-            lastnameInput.value = person.scamlastname;
-            lastnameInput.className = "w-full px-2 py-1 border rounded-md";
-    
-            const informerInput = document.createElement('input');
-            informerInput.value = person.informer || '';
-            informerInput.className = "w-full px-2 py-1 border rounded-md";
-    
-            const urlInput = document.createElement('input');
-            urlInput.value = person.url_informer || '';
-            urlInput.className = "w-full px-2 py-1 border rounded-md";
-    
-            const detailInput = document.createElement('textarea');
-            detailInput.value = person.detail || '';
-            detailInput.className = "w-full px-2 py-1 border rounded-md";
-            detailInput.rows = 2;
-    
-            // Save and cancel buttons
-            const saveBtn = document.createElement('button');
-            saveBtn.textContent = 'บันทึก';
-            saveBtn.className = "bg-green-600 hover:bg-green-700 text-white px-4 py-1 rounded-md text-sm";
-    
-            const cancelBtn = document.createElement('button');
-            cancelBtn.textContent = 'ยกเลิก';
-            cancelBtn.className = "bg-gray-400 hover:bg-gray-500 text-white px-4 py-1 rounded-md text-sm";
-    
-            saveBtn.onclick = async () => {
-              const { error } = await supabase
-                .from('scammer')
-                .update({
-                  scamname: nameInput.value.trim(),
-                  scamlastname: lastnameInput.value.trim(),
-                  informer: informerInput.value.trim(),
-                  url_informer: urlInput.value.trim(),
-                  detail: detailInput.value.trim()
-                })
-                .eq('id', person.id);
-    
-              if (error) {
-                alert("ไม่สามารถบันทึกได้: " + error.message);
-              } else {
-                await loadPeople();
-              }
-            };
-    
-            cancelBtn.onclick = () => {
-              loadPeople();
-            };
-    
-            container.appendChild(nameInput);
-            container.appendChild(lastnameInput);
-            container.appendChild(informerInput);
-            container.appendChild(urlInput);
-            container.appendChild(detailInput);
-            container.appendChild(saveBtn);
-            container.appendChild(cancelBtn);
-          };
-    
-          btnWrapper.appendChild(editBtn);
-          btnWrapper.appendChild(deleteBtn);
-          container.appendChild(btnWrapper);
-        }
-    
-        li.appendChild(container);
-        list.appendChild(li);
-      });
-    }
-
-
-    async function addPerson() {
-      const name = document.getElementById('new-name').value.trim();
-      const lastname = document.getElementById('new-lastname').value.trim();
-      const informer = document.getElementById('informer').value.trim();
-      const url = document.getElementById('url-informer').value.trim();
-      const detail = document.getElementById('detail').value.trim();
-
-      if (!name || !lastname) {
-        alert("กรุณากรอกข้อมูลให้ครบ");
-        return;
-      }
-
-      const { error } = await supabase.from('scammer').insert([{
-        scamname: name,
-        scamlastname: lastname,
-        informer: informer,
-        url_informer: url,
-        detail: detail,
-        saveadmin: currentUser?.email || 'unknown',
-        savetime: new Date().toISOString()
-      }]);
-
-      if (error) {
-        alert('เกิดข้อผิดพลาด: ' + error.message);
-        return;
-      }
-
-      document.getElementById('new-name').value = '';
-      document.getElementById('new-lastname').value = '';
-      document.getElementById('informer').value = '';
-      document.getElementById('url-informer').value = '';
-      document.getElementById('detail').value = '';
-
-      await loadPeople();
-    }
-
-    async function deletePerson(id) {
-      if (!confirm("คุณแน่ใจว่าต้องการลบข้อมูลนี้ใช่ไหม?")) return;
-      const { error } = await supabase.from('scammer').delete().eq('id', id);
-      if (error) alert('ลบไม่สำเร็จ: ' + error.message);
-      await loadPeople();
-    }
-
-    async function editPerson(person) {
-      const newName = prompt("ชื่อใหม่:", person.scamname);
-      if (!newName) return;
-
-      const newLastname = prompt("นามสกุลใหม่:", person.scamlastname);
-      if (!newLastname) return;
-
-      const newDetail = prompt("รายละเอียดใหม่:", person.detail || '');
-      const newInformer = prompt("ชื่อผู้แจ้งใหม่:", person.informer || '');
-      const newUrl = prompt("URL Facebook ผู้แจ้งใหม่:", person.url_informer || '');
-
-      const { error } = await supabase.from('scammer')
-        .update({
-          scamname: newName.trim(),
-          scamlastname: newLastname.trim(),
-          detail: newDetail?.trim(),
-          informer: newInformer?.trim(),
-          url_informer: newUrl?.trim(),
-        })
-        .eq('id', person.id);
-
-      if (error) {
-        alert("เกิดข้อผิดพลาด: " + error.message);
-      } else {
-        await loadPeople();
-      }
-    }
-
-    async function login() {
-      const email = document.getElementById('emailInput').value.trim();
-      const password = document.getElementById('passwordInput').value.trim();
-
-      const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-      if (error) {
-        alert("เข้าสู่ระบบล้มเหลว: " + error.message);
-        return;
-      }
-
-      currentUser = data.user;
-      document.getElementById('user-name').textContent = `สวัสดี, ${currentUser.email}`;
-      document.getElementById('login-section').classList.add('hidden');
-      document.getElementById('user-info').classList.remove('hidden');
-      document.getElementById('add-section').classList.remove('hidden');
-
-      await loadPeople();
-    }
-
-    async function logout() {
-      await supabase.auth.signOut();
-      currentUser = null;
-      document.getElementById('user-name').textContent = '';
-      document.getElementById('login-section').classList.remove('hidden');
-      document.getElementById('user-info').classList.add('hidden');
-      document.getElementById('add-section').classList.add('hidden');
-      document.getElementById('people-list').innerHTML = '<li class="text-gray-600">กำลังโหลด...</li>';
-      await loadPeople();
-    }
-
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (session?.user) {
-        currentUser = session.user;
-        document.getElementById('user-name').textContent = `สวัสดี, ${currentUser.email}`;
-        document.getElementById('login-section').classList.add('hidden');
-        document.getElementById('user-info').classList.remove('hidden');
-        document.getElementById('add-section').classList.remove('hidden');
-      }
-      loadPeople();
-    });
-
-    document.getElementById('search').addEventListener('input', (e) => {
-      const keyword = e.target.value.toLowerCase();
-      const filtered = allPeople.filter(p =>
-        p.scamname.toLowerCase().includes(keyword) ||
-        p.scamlastname.toLowerCase().includes(keyword)
-      );
-      showPeople(filtered);
-    });
-  </script>
+      <!-- 🔐 ฟอร์มเข้าสู่ระบบ -->
+      <div id="login-section" class="mb-4 space-y-2">
+        <input type="email" id="emailInput" placeholder="อีเมล"
+          class="w-full px-3 py-2 border border-gray-400 bg-gray-100 text-gray-800 rounded-md placeholder-gray-500" />
+        <input type="password" id="passwordInput" placeholder="รหัสผ่าน"
+          class="w-full px-3 py-2 border border-gray-400 bg-gray-100 text-gray-800 rounded-md placeholder-gray-500" />
+        <button onclick="login()" class="w-full bg-blue-500 hover:bg-blue-600 text-white py-2 rounded-md">
+          เข้าสู่ระบบ
+        </button>
       </div>
+
+      <!-- 👤 แสดงข้อมูลผู้ใช้ -->
+      <div id="user-info" class="hidden mb-4">
+        <p id="user-name" class="text-gray-800 mb-2"></p>
+        <button onclick="logout()" class="w-full bg-red-500 hover:bg-red-600 text-white py-2 rounded-md">
+          ออกจากระบบ
+        </button>
+      </div>
+
+      <!-- 🔍 ค้นหา -->
+      <div class="mb-4">
+        <input type="text" id="search" placeholder="🔍 ค้นหาชื่อหรือนามสกุล..."
+          class="w-full px-3 py-2 border border-gray-400 bg-gray-100 text-gray-800 rounded-md placeholder-gray-500" />
+      </div>
+
+      <!-- ➕ เพิ่มรายชื่อ -->
+      <div id="add-section" class="hidden mb-4 space-y-2">
+        <input type="text" id="new-name" placeholder="เพิ่มชื่อใหม่"
+          class="w-full px-3 py-2 border border-gray-400 bg-gray-100 text-gray-800 rounded-md" />
+        <input type="text" id="new-lastname" placeholder="เพิ่มนามสกุล"
+          class="w-full px-3 py-2 border border-gray-400 bg-gray-100 text-gray-800 rounded-md" />
+        <input type="text" id="informer" placeholder="ชื่อผู้แจ้ง"
+          class="w-full px-3 py-2 border border-gray-400 bg-gray-100 text-gray-800 rounded-md" />
+        <input type="text" id="url-informer" placeholder="ลิงก์ Facebook ผู้แจ้ง"
+          class="w-full px-3 py-2 border border-gray-400 bg-gray-100 text-gray-800 rounded-md" />
+        <textarea id="detail" placeholder="รายละเอียดเพิ่มเติม"
+          class="w-full px-3 py-2 border border-gray-400 bg-gray-100 text-gray-800 rounded-md" rows="3"></textarea>
+        <button onclick="addPerson()"
+          class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-md font-semibold">
+          ➕ เพิ่มรายชื่อ
+        </button>
+      </div>
+
+      <!-- รายชื่อ -->
+      <ul id="people-list" class="space-y-2">
+        <li class="text-gray-600">กำลังโหลด...</li>
+      </ul>
+    </div>
   </div>
+
+<script>
+const SUPABASE_URL = 'https://pklvscffpbapogezoxyn.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBrbHZzY2ZmcGJhcG9nZXpveHluIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDk1NTIxNTYsImV4cCI6MjA2NTEyODE1Nn0.O0cXyJAo0qdbNZsLqK1zpo1lS1H1mrudaGz2VaEQQaM';
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    
+        let allPeople = [];
+        let currentUser = null;
+    
+        async function loadPeople() {
+          const { data, error } = await supabase.from('scammer').select('*');
+          const list = document.getElementById('people-list');
+    
+          if (error) {
+            list.innerHTML = `<li class="text-red-500">${error.message}</li>`;
+            return;
+          }
+    
+          allPeople = data;
+          showPeople(data);
+        }
+    
+        function showPeople(data) {
+          const list = document.getElementById('people-list');
+          list.innerHTML = '';
+        
+          if (data.length === 0) {
+            list.innerHTML = '<li class="text-gray-500">ไม่มีข้อมูล</li>';
+            return;
+          }
+        
+          data.forEach(person => {
+            const li = document.createElement('li');
+            li.className = "bg-white p-4 rounded-xl shadow border border-gray-200";
+        
+            const container = document.createElement('div');
+            container.className = "space-y-2";
+        
+            let isEditing = false;
+        
+            const name = document.createElement('h2');
+            name.className = "text-xl font-semibold text-gray-800";
+            name.textContent = `${person.scamname} ${person.scamlastname}`;
+        
+            const detail = document.createElement('p');
+            detail.className = "text-gray-700 text-sm";
+            if (person.detail) {
+              detail.innerHTML = `📝 <span class="font-medium">รายละเอียด:</span> ${person.detail}`;
+            }
+        
+            const informer = document.createElement('p');
+            informer.className = "text-gray-600 text-sm";
+            if (person.informer) {
+              informer.innerHTML = `👤 <span class="font-medium">ผู้แจ้ง:</span> ${person.informer} | 
+                <a href="${person.url_informer}" target="_blank" class="text-blue-600 underline">FB</a>`;
+            }
+        
+            container.appendChild(name);
+            if (person.detail) container.appendChild(detail);
+            if (person.informer) container.appendChild(informer);
+        
+            if (currentUser) {
+              const btnWrapper = document.createElement('div');
+              btnWrapper.className = "pt-2 flex space-x-2";
+        
+              const deleteBtn = document.createElement('button');
+              deleteBtn.textContent = 'ลบ';
+              deleteBtn.className = "bg-red-500 hover:bg-red-600 text-white px-4 py-1 rounded-md text-sm";
+              deleteBtn.onclick = () => deletePerson(person.id);
+        
+              const editBtn = document.createElement('button');
+              editBtn.textContent = 'แก้ไข';
+              editBtn.className = "bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-1 rounded-md text-sm";
+        
+              editBtn.onclick = () => {
+                if (isEditing) return;
+                isEditing = true;
+        
+                // Clear current container
+                container.innerHTML = '';
+        
+                // Create inputs
+                const nameInput = document.createElement('input');
+                nameInput.value = person.scamname;
+                nameInput.className = "w-full px-2 py-1 border rounded-md";
+        
+                const lastnameInput = document.createElement('input');
+                lastnameInput.value = person.scamlastname;
+                lastnameInput.className = "w-full px-2 py-1 border rounded-md";
+        
+                const informerInput = document.createElement('input');
+                informerInput.value = person.informer || '';
+                informerInput.className = "w-full px-2 py-1 border rounded-md";
+        
+                const urlInput = document.createElement('input');
+                urlInput.value = person.url_informer || '';
+                urlInput.className = "w-full px-2 py-1 border rounded-md";
+        
+                const detailInput = document.createElement('textarea');
+                detailInput.value = person.detail || '';
+                detailInput.className = "w-full px-2 py-1 border rounded-md";
+                detailInput.rows = 2;
+        
+                // Save and cancel buttons
+                const saveBtn = document.createElement('button');
+                saveBtn.textContent = 'บันทึก';
+                saveBtn.className = "bg-green-600 hover:bg-green-700 text-white px-4 py-1 rounded-md text-sm";
+        
+                const cancelBtn = document.createElement('button');
+                cancelBtn.textContent = 'ยกเลิก';
+                cancelBtn.className = "bg-gray-400 hover:bg-gray-500 text-white px-4 py-1 rounded-md text-sm";
+        
+                saveBtn.onclick = async () => {
+                  const { error } = await supabase
+                    .from('scammer')
+                    .update({
+                      scamname: nameInput.value.trim(),
+                      scamlastname: lastnameInput.value.trim(),
+                      informer: informerInput.value.trim(),
+                      url_informer: urlInput.value.trim(),
+                      detail: detailInput.value.trim()
+                    })
+                    .eq('id', person.id);
+        
+                  if (error) {
+                    alert("ไม่สามารถบันทึกได้: " + error.message);
+                  } else {
+                    await loadPeople();
+                  }
+                };
+        
+                cancelBtn.onclick = () => {
+                  loadPeople();
+                };
+        
+                container.appendChild(nameInput);
+                container.appendChild(lastnameInput);
+                container.appendChild(informerInput);
+                container.appendChild(urlInput);
+                container.appendChild(detailInput);
+                container.appendChild(saveBtn);
+                container.appendChild(cancelBtn);
+              };
+        
+              btnWrapper.appendChild(editBtn);
+              btnWrapper.appendChild(deleteBtn);
+              container.appendChild(btnWrapper);
+            }
+        
+            li.appendChild(container);
+            list.appendChild(li);
+          });
+        }
+    
+    
+        async function addPerson() {
+          const name = document.getElementById('new-name').value.trim();
+          const lastname = document.getElementById('new-lastname').value.trim();
+          const informer = document.getElementById('informer').value.trim();
+          const url = document.getElementById('url-informer').value.trim();
+          const detail = document.getElementById('detail').value.trim();
+    
+          if (!name || !lastname) {
+            alert("กรุณากรอกข้อมูลให้ครบ");
+            return;
+          }
+    
+          const { error } = await supabase.from('scammer').insert([{
+            scamname: name,
+            scamlastname: lastname,
+            informer: informer,
+            url_informer: url,
+            detail: detail,
+            saveadmin: currentUser?.email || 'unknown',
+            savetime: new Date().toISOString()
+          }]);
+    
+          if (error) {
+            alert('เกิดข้อผิดพลาด: ' + error.message);
+            return;
+          }
+    
+          document.getElementById('new-name').value = '';
+          document.getElementById('new-lastname').value = '';
+          document.getElementById('informer').value = '';
+          document.getElementById('url-informer').value = '';
+          document.getElementById('detail').value = '';
+    
+          await loadPeople();
+        }
+    
+        async function deletePerson(id) {
+          if (!confirm("คุณแน่ใจว่าต้องการลบข้อมูลนี้ใช่ไหม?")) return;
+          const { error } = await supabase.from('scammer').delete().eq('id', id);
+          if (error) alert('ลบไม่สำเร็จ: ' + error.message);
+          await loadPeople();
+        }
+    
+        async function editPerson(person) {
+          const newName = prompt("ชื่อใหม่:", person.scamname);
+          if (!newName) return;
+    
+          const newLastname = prompt("นามสกุลใหม่:", person.scamlastname);
+          if (!newLastname) return;
+    
+          const newDetail = prompt("รายละเอียดใหม่:", person.detail || '');
+          const newInformer = prompt("ชื่อผู้แจ้งใหม่:", person.informer || '');
+          const newUrl = prompt("URL Facebook ผู้แจ้งใหม่:", person.url_informer || '');
+    
+          const { error } = await supabase.from('scammer')
+            .update({
+              scamname: newName.trim(),
+              scamlastname: newLastname.trim(),
+              detail: newDetail?.trim(),
+              informer: newInformer?.trim(),
+              url_informer: newUrl?.trim(),
+            })
+            .eq('id', person.id);
+    
+          if (error) {
+            alert("เกิดข้อผิดพลาด: " + error.message);
+          } else {
+            await loadPeople();
+          }
+        }
+    
+        async function login() {
+          const email = document.getElementById('emailInput').value.trim();
+          const password = document.getElementById('passwordInput').value.trim();
+    
+          const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+          if (error) {
+            alert("เข้าสู่ระบบล้มเหลว: " + error.message);
+            return;
+          }
+    
+          currentUser = data.user;
+          document.getElementById('user-name').textContent = `สวัสดี, ${currentUser.email}`;
+          document.getElementById('login-section').classList.add('hidden');
+          document.getElementById('user-info').classList.remove('hidden');
+          document.getElementById('add-section').classList.remove('hidden');
+    
+          await loadPeople();
+        }
+    
+        async function logout() {
+          await supabase.auth.signOut();
+          currentUser = null;
+          document.getElementById('user-name').textContent = '';
+          document.getElementById('login-section').classList.remove('hidden');
+          document.getElementById('user-info').classList.add('hidden');
+          document.getElementById('add-section').classList.add('hidden');
+          document.getElementById('people-list').innerHTML = '<li class="text-gray-600">กำลังโหลด...</li>';
+          await loadPeople();
+        }
+    
+        supabase.auth.getSession().then(({ data: { session } }) => {
+          if (session?.user) {
+            currentUser = session.user;
+            document.getElementById('user-name').textContent = `สวัสดี, ${currentUser.email}`;
+            document.getElementById('login-section').classList.add('hidden');
+            document.getElementById('user-info').classList.remove('hidden');
+            document.getElementById('add-section').classList.remove('hidden');
+          }
+          loadPeople();
+        });
+    
+        document.getElementById('search').addEventListener('input', (e) => {
+          const keyword = e.target.value.toLowerCase();
+          const filtered = allPeople.filter(p =>
+            p.scamname.toLowerCase().includes(keyword) ||
+            p.scamlastname.toLowerCase().includes(keyword)
+          );
+          showPeople(filtered);
+        });
+</script>
 </body>
 </html>
