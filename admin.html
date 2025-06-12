@@ -84,62 +84,135 @@
     function showPeople(data) {
       const list = document.getElementById('people-list');
       list.innerHTML = '';
-
+    
       if (data.length === 0) {
         list.innerHTML = '<li class="text-gray-500">ไม่มีข้อมูล</li>';
         return;
       }
-
+    
       data.forEach(person => {
         const li = document.createElement('li');
         li.className = "bg-white p-4 rounded-xl shadow border border-gray-200";
-
+    
         const container = document.createElement('div');
         container.className = "space-y-2";
-
+    
+        let isEditing = false;
+    
         const name = document.createElement('h2');
         name.className = "text-xl font-semibold text-gray-800";
         name.textContent = `${person.scamname} ${person.scamlastname}`;
-        container.appendChild(name);
-
+    
+        const detail = document.createElement('p');
+        detail.className = "text-gray-700 text-sm";
         if (person.detail) {
-          const detail = document.createElement('p');
-          detail.className = "text-gray-700 text-sm";
           detail.innerHTML = `📝 <span class="font-medium">รายละเอียด:</span> ${person.detail}`;
-          container.appendChild(detail);
         }
-
+    
+        const informer = document.createElement('p');
+        informer.className = "text-gray-600 text-sm";
         if (person.informer) {
-          const informer = document.createElement('p');
-          informer.className = "text-gray-600 text-sm";
           informer.innerHTML = `👤 <span class="font-medium">ผู้แจ้ง:</span> ${person.informer} | 
             <a href="${person.url_informer}" target="_blank" class="text-blue-600 underline">FB</a>`;
-          container.appendChild(informer);
         }
-
+    
+        container.appendChild(name);
+        if (person.detail) container.appendChild(detail);
+        if (person.informer) container.appendChild(informer);
+    
         if (currentUser) {
           const btnWrapper = document.createElement('div');
           btnWrapper.className = "pt-2 flex space-x-2";
-
-          const editBtn = document.createElement('button');
-          editBtn.textContent = 'แก้ไข';
-          editBtn.className = "bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-1 rounded-md text-sm";
-          editBtn.onclick = () => editPerson(person);
-
+    
           const deleteBtn = document.createElement('button');
           deleteBtn.textContent = 'ลบ';
           deleteBtn.className = "bg-red-500 hover:bg-red-600 text-white px-4 py-1 rounded-md text-sm";
           deleteBtn.onclick = () => deletePerson(person.id);
-
+    
+          const editBtn = document.createElement('button');
+          editBtn.textContent = 'แก้ไข';
+          editBtn.className = "bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-1 rounded-md text-sm";
+    
+          editBtn.onclick = () => {
+            if (isEditing) return;
+            isEditing = true;
+    
+            // Clear current container
+            container.innerHTML = '';
+    
+            // Create inputs
+            const nameInput = document.createElement('input');
+            nameInput.value = person.scamname;
+            nameInput.className = "w-full px-2 py-1 border rounded-md";
+    
+            const lastnameInput = document.createElement('input');
+            lastnameInput.value = person.scamlastname;
+            lastnameInput.className = "w-full px-2 py-1 border rounded-md";
+    
+            const informerInput = document.createElement('input');
+            informerInput.value = person.informer || '';
+            informerInput.className = "w-full px-2 py-1 border rounded-md";
+    
+            const urlInput = document.createElement('input');
+            urlInput.value = person.url_informer || '';
+            urlInput.className = "w-full px-2 py-1 border rounded-md";
+    
+            const detailInput = document.createElement('textarea');
+            detailInput.value = person.detail || '';
+            detailInput.className = "w-full px-2 py-1 border rounded-md";
+            detailInput.rows = 2;
+    
+            // Save and cancel buttons
+            const saveBtn = document.createElement('button');
+            saveBtn.textContent = 'บันทึก';
+            saveBtn.className = "bg-green-600 hover:bg-green-700 text-white px-4 py-1 rounded-md text-sm";
+    
+            const cancelBtn = document.createElement('button');
+            cancelBtn.textContent = 'ยกเลิก';
+            cancelBtn.className = "bg-gray-400 hover:bg-gray-500 text-white px-4 py-1 rounded-md text-sm";
+    
+            saveBtn.onclick = async () => {
+              const { error } = await supabase
+                .from('scammer')
+                .update({
+                  scamname: nameInput.value.trim(),
+                  scamlastname: lastnameInput.value.trim(),
+                  informer: informerInput.value.trim(),
+                  url_informer: urlInput.value.trim(),
+                  detail: detailInput.value.trim()
+                })
+                .eq('id', person.id);
+    
+              if (error) {
+                alert("ไม่สามารถบันทึกได้: " + error.message);
+              } else {
+                await loadPeople();
+              }
+            };
+    
+            cancelBtn.onclick = () => {
+              loadPeople();
+            };
+    
+            container.appendChild(nameInput);
+            container.appendChild(lastnameInput);
+            container.appendChild(informerInput);
+            container.appendChild(urlInput);
+            container.appendChild(detailInput);
+            container.appendChild(saveBtn);
+            container.appendChild(cancelBtn);
+          };
+    
           btnWrapper.appendChild(editBtn);
           btnWrapper.appendChild(deleteBtn);
           container.appendChild(btnWrapper);
         }
-
+    
         li.appendChild(container);
         list.appendChild(li);
       });
     }
+
 
     async function addPerson() {
       const name = document.getElementById('new-name').value.trim();
