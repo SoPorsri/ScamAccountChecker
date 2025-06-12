@@ -61,19 +61,18 @@
 
   <script>
     const SUPABASE_URL = 'https://pklvscffpbapogezoxyn.supabase.co';
-    const SUPABASE_KEY = 'eyJ...'; // ซ่อนไว้เพื่อความปลอดภัย
-    const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBrbHZzY2ZmcGJhcG9nZXpveHluIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDk1NTIxNTYsImV4cCI6MjA2NTEyODE1Nn0.O0cXyJAo0qdbNZsLqK1zpo1lS1H1mrudaGz2VaEQQaM'; // 👈 เปลี่ยนเป็น key ของคุณ
+    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
     let allPeople = [];
     let currentUser = null;
 
     async function loadPeople() {
-      const { data, error } = await supabase
-        .from('scammer')
-        .select('*');
+      const { data, error } = await supabase.from('scammer').select('*');
+      const list = document.getElementById('people-list');
 
       if (error) {
-        document.getElementById('people-list').innerHTML = `<li class="text-red-500">${error.message}</li>`;
+        list.innerHTML = `<li class="text-red-500">${error.message}</li>`;
         return;
       }
 
@@ -196,14 +195,11 @@
         return;
       }
 
-      const session = data.session;
-      if (session?.user) {
-        currentUser = session.user;
-        document.getElementById('user-name').textContent = `สวัสดี, ${currentUser.email}`;
-        document.getElementById('login-section').classList.add('hidden');
-        document.getElementById('user-info').classList.remove('hidden');
-        document.getElementById('add-section').classList.remove('hidden');
-      }
+      currentUser = data.user;
+      document.getElementById('user-name').textContent = `สวัสดี, ${currentUser.email}`;
+      document.getElementById('login-section').classList.add('hidden');
+      document.getElementById('user-info').classList.remove('hidden');
+      document.getElementById('add-section').classList.remove('hidden');
 
       await loadPeople();
     }
@@ -228,6 +224,16 @@
         document.getElementById('add-section').classList.remove('hidden');
       }
       loadPeople();
+    });
+
+    // 🔎 เพิ่มระบบค้นหา
+    document.getElementById('search').addEventListener('input', (e) => {
+      const keyword = e.target.value.toLowerCase();
+      const filtered = allPeople.filter(p =>
+        p.scamname.toLowerCase().includes(keyword) ||
+        p.scamlastname.toLowerCase().includes(keyword)
+      );
+      showPeople(filtered);
     });
   </script>
 </body>
