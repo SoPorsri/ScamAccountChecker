@@ -89,13 +89,13 @@ const SUPABASE_URL = 'https://pklvscffpbapogezoxyn.supabase.co';
           list.innerHTML = '';
         
           if (data.length === 0) {
-            list.innerHTML = '<li class="text-gray-500">ไม่มีข้อมูล</li>';
+            list.innerHTML = '<li class="text-gray-400">ไม่มีข้อมูล</li>';
             return;
           }
         
           data.forEach(person => {
             const li = document.createElement('li');
-            li.className = "bg-white p-4 rounded-xl shadow border border-gray-200";
+            li.className = "bg-gray-800 p-4 rounded-xl shadow border border-gray-700 text-gray-100";
         
             const container = document.createElement('div');
             container.className = "space-y-2";
@@ -103,20 +103,20 @@ const SUPABASE_URL = 'https://pklvscffpbapogezoxyn.supabase.co';
             let isEditing = false;
         
             const name = document.createElement('h2');
-            name.className = "text-xl font-semibold text-gray-800";
+            name.className = "text-xl font-semibold text-white";
             name.textContent = `${person.scamname} ${person.scamlastname}`;
         
             const detail = document.createElement('p');
-            detail.className = "text-gray-700 text-sm";
+            detail.className = "text-gray-300 text-sm";
             if (person.detail) {
               detail.innerHTML = `📝 <span class="font-medium">รายละเอียด:</span> ${person.detail}`;
             }
         
             const informer = document.createElement('p');
-            informer.className = "text-gray-600 text-sm";
+            informer.className = "text-gray-400 text-sm";
             if (person.informer) {
               informer.innerHTML = `👤 <span class="font-medium">ผู้แจ้ง:</span> ${person.informer} | 
-                <a href="${person.url_informer}" target="_blank" class="text-blue-600 underline">FB</a>`;
+                <a href="${person.url_informer}" target="_blank" class="text-blue-400 underline">FB</a>`;
             }
         
             container.appendChild(name);
@@ -129,50 +129,46 @@ const SUPABASE_URL = 'https://pklvscffpbapogezoxyn.supabase.co';
         
               const deleteBtn = document.createElement('button');
               deleteBtn.textContent = 'ลบ';
-              deleteBtn.className = "bg-red-500 hover:bg-red-600 text-white px-4 py-1 rounded-md text-sm";
+              deleteBtn.className = "bg-red-600 hover:bg-red-700 text-white px-4 py-1 rounded-md text-sm";
               deleteBtn.onclick = () => deletePerson(person.id);
         
               const editBtn = document.createElement('button');
               editBtn.textContent = 'แก้ไข';
               editBtn.className = "bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-1 rounded-md text-sm";
-        
               editBtn.onclick = () => {
                 if (isEditing) return;
                 isEditing = true;
         
-                // Clear current container
                 container.innerHTML = '';
         
-                // Create inputs
                 const nameInput = document.createElement('input');
                 nameInput.value = person.scamname;
-                nameInput.className = "w-full px-2 py-1 border rounded-md";
+                nameInput.className = "w-full px-2 py-1 border rounded-md bg-gray-900 text-white";
         
                 const lastnameInput = document.createElement('input');
                 lastnameInput.value = person.scamlastname;
-                lastnameInput.className = "w-full px-2 py-1 border rounded-md";
+                lastnameInput.className = "w-full px-2 py-1 border rounded-md bg-gray-900 text-white";
         
                 const informerInput = document.createElement('input');
                 informerInput.value = person.informer || '';
-                informerInput.className = "w-full px-2 py-1 border rounded-md";
+                informerInput.className = "w-full px-2 py-1 border rounded-md bg-gray-900 text-white";
         
                 const urlInput = document.createElement('input');
                 urlInput.value = person.url_informer || '';
-                urlInput.className = "w-full px-2 py-1 border rounded-md";
+                urlInput.className = "w-full px-2 py-1 border rounded-md bg-gray-900 text-white";
         
                 const detailInput = document.createElement('textarea');
                 detailInput.value = person.detail || '';
-                detailInput.className = "w-full px-2 py-1 border rounded-md";
+                detailInput.className = "w-full px-2 py-1 border rounded-md bg-gray-900 text-white";
                 detailInput.rows = 2;
         
-                // Save and cancel buttons
                 const saveBtn = document.createElement('button');
                 saveBtn.textContent = 'บันทึก';
                 saveBtn.className = "bg-green-600 hover:bg-green-700 text-white px-4 py-1 rounded-md text-sm";
         
                 const cancelBtn = document.createElement('button');
                 cancelBtn.textContent = 'ยกเลิก';
-                cancelBtn.className = "bg-gray-400 hover:bg-gray-500 text-white px-4 py-1 rounded-md text-sm";
+                cancelBtn.className = "bg-gray-500 hover:bg-gray-600 text-white px-4 py-1 rounded-md text-sm";
         
                 saveBtn.onclick = async () => {
                   const { error } = await supabase
