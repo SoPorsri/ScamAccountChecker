@@ -37,7 +37,7 @@
       const { data, error } = await supabaseClient
         .from('scammer')
         .select('id, scamname, scamlastname')
-        .order('scamname', { ascending: true }); // ✅ เรียงตามชื่อ
+        .order('scamname', { ascending: true });
     
       if (error) {
         document.getElementById('people-list').innerHTML = `<li class="text-red-500">${error.message}</li>`;
@@ -45,18 +45,23 @@
       }
     
       allPeople = data;
+      document.getElementById('scammer-total').textContent = `ยอดรวมทั้งหมด: ${data.length} ราย`;
       showPeople(data);
     }
-
+    
     function showPeople(data) {
       const list = document.getElementById('people-list');
+      const countDisplay = document.getElementById('scammer-count');
       list.innerHTML = '';
-
+    
       if (data.length === 0) {
         list.innerHTML = '<li class="text-gray-500">ไม่มีข้อมูล</li>';
+        countDisplay.textContent = 'ไม่พบผลลัพธ์';
         return;
       }
-
+    
+      countDisplay.textContent = `ผลการค้นหาพบ ${data.length} ราย`;
+    
       data.forEach(person => {
         const li = document.createElement('li');
         li.className = "bg-white p-3 rounded-md border border-gray-300 text-gray-800";
