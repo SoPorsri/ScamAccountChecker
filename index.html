@@ -32,9 +32,9 @@
     }
   </style>
 </head>
-<body class="bg-slate-900 min-h-screen px-4 py-10 text-orange-400 flex justify-center">
+<body class="bg-slate-900 min-h-screen flex items-center justify-center px-6 text-orange-400">
 
-  <div class="max-w-3xl w-full bg-slate-800/90 backdrop-blur-md shadow-2xl rounded-3xl p-8 border border-orange-600">
+  <div class="max-w-3xl w-full bg-slate-800/90 backdrop-blur-md shadow-2xl rounded-3xl p-8 border border-orange-600 flex flex-col">
     <h1 class="text-4xl font-extrabold mb-8 text-center text-orange-400 glow-orange drop-shadow-lg">
       🕵️‍♂️ รายชื่อบัญชีมิจฉาชีพที่ต้องระวัง ⚠️
     </h1>
@@ -57,10 +57,19 @@
     </p>
 
     <!-- รายชื่อ -->
-    <div class="bg-slate-700 p-6 rounded-2xl border border-orange-600 shadow-inner">
+    <div class="bg-slate-700 p-6 rounded-2xl border border-orange-600 shadow-inner flex-grow overflow-y-auto max-h-[400px]">
       <ul id="people-list" class="space-y-3 text-orange-300 font-medium text-lg">
         <li class="text-orange-500 text-center font-semibold">กำลังโหลด...</li>
       </ul>
+    </div>
+
+    <!-- ปุ่มลิงก์ไปหน้าแอดมิน -->
+    <div class="mt-6 text-center">
+      <a href="https://soporsri.github.io/ScamAccountChecker/admin.html"
+         target="_blank"
+         class="inline-block px-6 py-3 bg-orange-600 hover:bg-orange-500 text-white font-semibold rounded-xl shadow-lg transition">
+        ไปยังหน้าผู้ดูแลระบบ (Admin)
+      </a>
     </div>
   </div>
 
