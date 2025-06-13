@@ -80,12 +80,12 @@
         const elapsed = currentTime - startTime;
         const progress = Math.min(elapsed / duration, 1);
         const currentNumber = Math.floor(progress * targetNumber);
-        element.textContent = ยอดรวมทั้งหมด: ${currentNumber} ราย;
+        element.textContent = `ยอดรวมทั้งหมด: ${currentNumber} ราย`;
 
         if (progress < 1) {
           requestAnimationFrame(update);
         } else {
-          element.textContent = ยอดรวมทั้งหมด: ${targetNumber} ราย;
+          element.textContent = `ยอดรวมทั้งหมด: ${targetNumber} ราย`;
         }
       }
 
