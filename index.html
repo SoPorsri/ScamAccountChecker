@@ -6,24 +6,57 @@
   <title>Scammer List</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
   <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    /* Animation สำหรับ header */
+    @keyframes pulse-glow {
+      0%, 100% { text-shadow: 0 0 8px #f97316, 0 0 15px #f97316; }
+      50% { text-shadow: 0 0 20px #fb923c, 0 0 30px #fb923c; }
+    }
+    .glow-orange {
+      animation: pulse-glow 2.5s ease-in-out infinite;
+    }
+    /* Animation สำหรับปุ่ม search */
+    #search:focus {
+      outline: none;
+      box-shadow: 0 0 8px 3px #fb923c;
+      border-color: #fb923c;
+      transition: box-shadow 0.3s ease;
+    }
+    /* รายชื่อเมื่อ hover */
+    #people-list li:hover {
+      background: #fb923c;
+      color: white;
+      cursor: pointer;
+      transform: translateX(8px);
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 8px rgb(251 146 60 / 0.5);
+    }
+  </style>
 </head>
-<body class="bg-gray-100 text-gray-900">
-  <div class="max-w-2xl mx-auto mt-10 p-6 bg-gray-200 shadow-md rounded-xl">
-    <h1 class="text-2xl font-bold mb-4 text-center text-gray-800">🕵️‍♂️ รายชื่อบัญชีมิจฉาชีพที่ต้องระวัง⚠️</h1>
+<body class="bg-gradient-to-br from-orange-50 via-white to-yellow-100 min-h-screen flex items-center justify-center px-4">
 
-    <!-- 🔍 ช่องค้นหา -->
-    <div class="mb-2">
-      <input type="text" id="search" placeholder="🔍 ค้นหาชื่อหรือนามสกุล..."
-        class="w-full px-3 py-2 border border-gray-400 bg-gray-100 text-gray-800 rounded-md placeholder-gray-500" />
+  <div class="max-w-3xl w-full bg-white/90 backdrop-blur-md shadow-2xl rounded-3xl p-8 border border-orange-300">
+    <h1 class="text-4xl font-extrabold mb-8 text-center text-orange-600 glow-orange drop-shadow-lg">
+      🕵️‍♂️ รายชื่อบัญชีมิจฉาชีพที่ต้องระวัง ⚠️
+    </h1>
+
+    <!-- ช่องค้นหา -->
+    <div class="mb-4">
+      <input
+        type="text"
+        id="search"
+        placeholder="🔍 ค้นหาชื่อหรือนามสกุล..."
+        class="w-full px-5 py-3 rounded-xl border-2 border-orange-300 text-orange-900 placeholder-orange-400 font-semibold text-lg shadow-md focus:ring-4 focus:ring-orange-300 transition"
+      />
     </div>
 
-    <!-- ✅ ยอดรวมทั้งหมด -->
-    <p id="scammer-total" class="text-sm text-gray-700 mb-4 text-left font-bold">กำลังโหลดข้อมูลทั้งหมด...</p>
+    <!-- ยอดรวมทั้งหมด -->
+    <p id="scammer-total" class="text-left font-bold text-xl text-orange-700 mb-6 select-none drop-shadow-md">กำลังโหลดข้อมูลทั้งหมด...</p>
 
-    <!-- 🔳 รายชื่อ -->
-    <div class="bg-gray-100 p-4 rounded-lg border border-gray-300">
-      <ul id="people-list" class="space-y-2">
-        <li class="text-gray-600">กำลังโหลด...</li>
+    <!-- รายชื่อ -->
+    <div class="bg-orange-50 p-6 rounded-2xl border border-orange-200 shadow-inner max-h-[400px] overflow-y-auto">
+      <ul id="people-list" class="space-y-3 text-orange-900 font-medium text-lg">
+        <li class="text-orange-500 text-center">กำลังโหลด...</li>
       </ul>
     </div>
   </div>
@@ -36,8 +69,7 @@
 
     let allPeople = [];
 
-    // ✅ ฟังก์ชันนับเลขขึ้นแบบ Animation
-    function animateCount(element, targetNumber, duration = 1000) {
+    function animateCount(element, targetNumber, duration = 1200) {
       let start = 0;
       const stepTime = Math.max(Math.floor(duration / targetNumber), 20);
       const startTime = performance.now();
@@ -67,15 +99,14 @@
       const totalEl = document.getElementById('scammer-total');
 
       if (error) {
-        document.getElementById('people-list').innerHTML = `<li class="text-red-500">${error.message}</li>`;
+        document.getElementById('people-list').innerHTML = `<li class="text-red-600 font-bold">${error.message}</li>`;
         totalEl.textContent = 'เกิดข้อผิดพลาดในการโหลดข้อมูล';
         return;
       }
 
       allPeople = data;
 
-      // ✅ แสดงยอดรวมพร้อม animation
-      animateCount(totalEl, data.length, 1000);
+      animateCount(totalEl, data.length, 1200);
 
       showPeople(data);
     }
@@ -85,19 +116,18 @@
       list.innerHTML = '';
 
       if (data.length === 0) {
-        list.innerHTML = '<li class="text-gray-500">ไม่มีข้อมูล</li>';
+        list.innerHTML = '<li class="text-orange-400 text-center font-semibold">ไม่มีข้อมูล</li>';
         return;
       }
 
       data.forEach(person => {
         const li = document.createElement('li');
-        li.className = "bg-white p-3 rounded-md border border-gray-300 text-gray-800";
+        li.className = "bg-white rounded-xl p-4 shadow-md border border-orange-300 hover:bg-orange-400 hover:text-white transition-transform transform hover:translate-x-2 select-text";
         li.textContent = `${person.scamname} ${person.scamlastname}`;
         list.appendChild(li);
       });
     }
 
-    // ✅ การค้นหาแบบเรียลไทม์
     document.getElementById('search').addEventListener('input', function () {
       const keyword = this.value.toLowerCase();
       const filtered = allPeople.filter(p =>
