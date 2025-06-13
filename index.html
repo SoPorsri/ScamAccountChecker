@@ -3,65 +3,121 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Scammer List - Dark Mode</title>
+  <title>Scammer List - Dark Mode Pure</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
-    @keyframes pulse-glow {
-      0%, 100% { text-shadow: 0 0 8px #f97316, 0 0 15px #f97316; }
-      50% { text-shadow: 0 0 20px #fb923c, 0 0 30px #fb923c; }
+    body {
+      background-color: #121212; /* very dark */
+      color: #cbd5e1; /* slate-300 */
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     }
-    .glow-orange {
-      animation: pulse-glow 2.5s ease-in-out infinite;
+    h1 {
+      color: #e2e8f0; /* lighter text */
+      text-shadow: 0 0 8px #334155; /* subtle glow */
+    }
+    #search {
+      background-color: #1e293b; /* slate-800 */
+      color: #e2e8f0; /* lighter text */
+      border: 2px solid #334155; /* slate-700 */
+      padding: 0.75rem 1.25rem;
+      border-radius: 1rem;
+      width: 100%;
+      font-weight: 600;
+      font-size: 1.125rem; /* text-lg */
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+    #search::placeholder {
+      color: #64748b; /* slate-500 */
     }
     #search:focus {
       outline: none;
-      box-shadow: 0 0 8px 3px #fb923c;
-      border-color: #fb923c;
-      transition: box-shadow 0.3s ease;
-      background-color: #1e293b; /* bg-slate-800 */
-      color: #fb923c; /* text-orange-400 */
+      border-color: #64748b; /* slate-500 */
+      box-shadow: 0 0 10px 3px #64748b;
+      background-color: #334155; /* slate-700 */
+      color: #f1f5f9; /* slate-100 */
+    }
+    #scammer-total {
+      font-weight: 700;
+      font-size: 1.25rem; /* text-xl */
+      margin-bottom: 1.5rem;
+      color: #cbd5e1; /* slate-300 */
+      user-select: none;
+    }
+    #people-list {
+      background-color: #1e293b; /* slate-800 */
+      padding: 1.5rem;
+      border-radius: 1rem;
+      border: 1px solid #334155; /* slate-700 */
+      box-shadow: inset 0 0 8px #0f172a; /* darker inset */
+      list-style: none;
+      margin: 0;
+    }
+    #people-list li {
+      background-color: #273449; /* slate-700 */
+      color: #cbd5e1; /* slate-300 */
+      padding: 1rem;
+      margin-bottom: 0.75rem;
+      border-radius: 0.75rem;
+      border: 1px solid #334155;
+      font-weight: 600;
+      font-size: 1.125rem; /* text-lg */
+      user-select: text;
+      transition: background-color 0.3s ease, color 0.3s ease, transform 0.3s ease;
+      cursor: default;
     }
     #people-list li:hover {
-      background: #fb923c;
-      color: white;
-      cursor: pointer;
+      background-color: #475569; /* slate-500 */
+      color: #f1f5f9; /* slate-100 */
       transform: translateX(8px);
-      transition: all 0.3s ease;
-      box-shadow: 0 2px 8px rgb(251 146 60 / 0.5);
+    }
+    .container {
+      max-width: 720px;
+      margin: 4rem auto;
+      padding: 2rem;
+      background-color: #1e293b; /* slate-800 */
+      border-radius: 1.5rem;
+      box-shadow: 0 8px 20px rgba(20, 20, 20, 0.8);
+      border: 1px solid #334155;
+    }
+    @media (max-width: 768px) {
+      .container {
+        margin: 2rem 1rem;
+        padding: 1.5rem;
+      }
+      #search {
+        font-size: 1rem;
+      }
+      #people-list li {
+        font-size: 1rem;
+        padding: 0.75rem;
+      }
     }
   </style>
 </head>
-<body class="bg-slate-900 min-h-screen flex items-center justify-center px-4 text-orange-400">
-
-  <div class="max-w-3xl w-full bg-slate-800/90 backdrop-blur-md shadow-2xl rounded-3xl p-8 border border-orange-600">
-    <h1 class="text-4xl font-extrabold mb-8 text-center text-orange-400 glow-orange drop-shadow-lg">
+<body>
+  <br>
+  <div class="container">
+    <h1 class="text-center text-4xl font-extrabold mb-8">
       🕵️‍♂️ รายชื่อบัญชีมิจฉาชีพที่ต้องระวัง ⚠️
     </h1>
 
     <!-- ช่องค้นหา -->
-    <div class="mb-4">
-      <input
-        type="text"
-        id="search"
-        placeholder="🔍 ค้นหาชื่อหรือนามสกุล..."
-        class="w-full px-5 py-3 rounded-xl border-2 border-orange-600 bg-slate-900 text-orange-400 placeholder-orange-600 font-semibold text-lg shadow-md transition"
-        autocomplete="off"
-        spellcheck="false"
-      />
-    </div>
+    <input
+      type="text"
+      id="search"
+      placeholder="🔍 ค้นหาชื่อหรือนามสกุล..."
+      autocomplete="off"
+      spellcheck="false"
+    />
 
     <!-- ยอดรวมทั้งหมด -->
-    <p id="scammer-total" class="text-left font-bold text-xl text-orange-300 mb-6 select-none drop-shadow-md">
-      กำลังโหลดข้อมูลทั้งหมด...
-    </p>
+    <p id="scammer-total" class="mt-4">กำลังโหลดข้อมูลทั้งหมด...</p>
 
     <!-- รายชื่อ -->
-    <div class="bg-slate-700 p-6 rounded-2xl border border-orange-600 shadow-inner">
-      <ul id="people-list" class="space-y-3 text-orange-300 font-medium text-lg">
-        <li class="text-orange-500 text-center font-semibold">กำลังโหลด...</li>
-      </ul>
-    </div>
+    <ul id="people-list" class="mt-6">
+      <li>กำลังโหลด...</li>
+    </ul>
   </div>
 
   <script>
@@ -73,8 +129,6 @@
     let allPeople = [];
 
     function animateCount(element, targetNumber, duration = 1200) {
-      let start = 0;
-      const stepTime = Math.max(Math.floor(duration / targetNumber), 20);
       const startTime = performance.now();
 
       function update(currentTime) {
@@ -102,7 +156,7 @@
       const totalEl = document.getElementById('scammer-total');
 
       if (error) {
-        document.getElementById('people-list').innerHTML = `<li class="text-red-600 font-bold">${error.message}</li>`;
+        document.getElementById('people-list').innerHTML = `<li style="color:#f87171; font-weight:bold;">${error.message}</li>`;
         totalEl.textContent = 'เกิดข้อผิดพลาดในการโหลดข้อมูล';
         return;
       }
@@ -119,13 +173,12 @@
       list.innerHTML = '';
 
       if (data.length === 0) {
-        list.innerHTML = '<li class="text-orange-600 text-center font-semibold">ไม่มีข้อมูล</li>';
+        list.innerHTML = '<li style="color:#64748b; text-align:center; font-weight:bold;">ไม่มีข้อมูล</li>';
         return;
       }
 
       data.forEach(person => {
         const li = document.createElement('li');
-        li.className = "bg-slate-900 rounded-xl p-4 shadow-md border border-orange-600 hover:bg-orange-500 hover:text-white transition-transform transform hover:translate-x-2 select-text cursor-pointer";
         li.textContent = `${person.scamname} ${person.scamlastname}`;
         list.appendChild(li);
       });
