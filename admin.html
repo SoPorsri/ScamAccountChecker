@@ -94,7 +94,12 @@
 
     data.forEach(person => {
       const li = document.createElement('li');
-      li.className = "bg-[#1a1a1a] text-gray-100 p-4 rounded-xl shadow-md border border-gray-700";
+      li.className = "text-gray-100 p-4 rounded-xl shadow-md border border-gray-700 relative overflow-hidden";
+      li.style.backgroundImage = "url('https://pklvscffpbapogezoxyn.supabase.co/storage/v1/object/public/scammer-photos/item-bg.png')";
+      li.style.backgroundSize = "cover";
+      li.style.backgroundPosition = "center";
+      li.style.backdropFilter = "blur(4px)"; // เพิ่มให้ดูละมุนขึ้นถ้าภาพชัด
+      li.style.backgroundRepeat = "no-repeat";
 
       const container = document.createElement('div');
       container.className = "space-y-2";
