@@ -101,7 +101,7 @@
       const totalEl = document.getElementById('scammer-total');
 
       if (error) {
-        document.getElementById('people-list').innerHTML = <li class="text-red-600 font-bold">${error.message}</li>;
+        document.getElementById('people-list').innerHTML = `<li class="text-red-600 font-bold">${error.message}</li>`;
         totalEl.textContent = 'เกิดข้อผิดพลาดในการโหลดข้อมูล';
         return;
       }
