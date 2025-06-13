@@ -18,12 +18,12 @@
     </div>
 
     <!-- ✅ ยอดรวมทั้งหมด -->
-    <p id="scammer-total" class="text-sm text-gray-700 mb-4 text-center">กำลังโหลดข้อมูลทั้งหมด...</p>
+    <p id="scammer-total" class="text-sm text-gray-700 mb-4 text-left">กำลังโหลดข้อมูลทั้งหมด...</p>
 
     <!-- 🔳 รายชื่อ -->
     <div class="bg-gray-100 p-4 rounded-lg border border-gray-300">
-      <!-- ✅ แสดงจำนวนผลลัพธ์ที่ค้นหาได้ -->
-      <p id="scammer-count" class="text-sm text-gray-600 mb-2 text-center">กำลังโหลด...</p>
+      <!-- ✅ ผลการค้นหา -->
+      <p id="scammer-count" class="text-sm text-gray-600 mb-2 text-left">กำลังโหลด...</p>
       <ul id="people-list" class="space-y-2">
         <li class="text-gray-600">กำลังโหลด...</li>
       </ul>
@@ -38,22 +38,46 @@
 
     let allPeople = [];
 
+    // ✅ ฟังก์ชันนับเลขขึ้นแบบ Animation
+    function animateCount(element, targetNumber, duration = 1000) {
+      let start = 0;
+      const stepTime = Math.max(Math.floor(duration / targetNumber), 20);
+      const startTime = performance.now();
+
+      function update(currentTime) {
+        const elapsed = currentTime - startTime;
+        const progress = Math.min(elapsed / duration, 1);
+        const currentNumber = Math.floor(progress * targetNumber);
+        element.textContent = `ยอดรวมทั้งหมด: ${currentNumber} ราย`;
+
+        if (progress < 1) {
+          requestAnimationFrame(update);
+        } else {
+          element.textContent = `ยอดรวมทั้งหมด: ${targetNumber} ราย`;
+        }
+      }
+
+      requestAnimationFrame(update);
+    }
+
     async function loadPeople() {
       const { data, error } = await supabaseClient
         .from('scammer')
         .select('id, scamname, scamlastname')
         .order('scamname', { ascending: true });
 
+      const totalEl = document.getElementById('scammer-total');
+
       if (error) {
         document.getElementById('people-list').innerHTML = `<li class="text-red-500">${error.message}</li>`;
-        document.getElementById('scammer-total').textContent = 'เกิดข้อผิดพลาดในการโหลดข้อมูล';
+        totalEl.textContent = 'เกิดข้อผิดพลาดในการโหลดข้อมูล';
         return;
       }
 
       allPeople = data;
 
-      // ✅ อัปเดตยอดรวมทั้งหมด
-      document.getElementById('scammer-total').textContent = `ยอดรวมทั้งหมด: ${data.length} ราย`;
+      // ✅ เรียกใช้ Animation นับยอด
+      animateCount(totalEl, data.length, 1000);
 
       showPeople(data);
     }
@@ -69,7 +93,6 @@
         return;
       }
 
-      // ✅ อัปเดตจำนวนที่ค้นหาได้
       countDisplay.textContent = `ผลการค้นหาพบ ${data.length} ราย`;
 
       data.forEach(person => {
@@ -80,7 +103,6 @@
       });
     }
 
-    // 🔍 ค้นหา
     document.getElementById('search').addEventListener('input', function () {
       const keyword = this.value.toLowerCase();
       const filtered = allPeople.filter(p =>
