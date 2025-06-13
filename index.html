@@ -3,106 +3,120 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Scammer List</title>
+  <title>Scammer List - Dark Mode Pure</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
-    /* เอฟเฟควิบวับ sparkle ที่หัวข้อ */
+    body {
+      background-color: #121212; /* very dark */
+      color: #cbd5e1; /* slate-300 */
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
     h1 {
-      position: relative;
-      color: #fff;
-      background: linear-gradient(270deg, #ffffff, #d1d5db, #ffffff);
-      background-size: 600% 600%;
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      animation: gradientShift 6s ease infinite, pulseGlow 3s ease-in-out infinite;
-      text-shadow:
-        0 0 8px rgba(255, 255, 255, 0.7),
-        0 0 20px rgba(255, 255, 255, 0.8);
+      color: #e2e8f0; /* lighter text */
+      text-shadow: 0 0 8px #334155; /* subtle glow */
+    }
+    #search {
+      background-color: #1e293b; /* slate-800 */
+      color: #e2e8f0; /* lighter text */
+      border: 2px solid #334155; /* slate-700 */
+      padding: 0.75rem 1.25rem;
+      border-radius: 1rem;
+      width: 100%;
+      font-weight: 600;
+      font-size: 1.125rem; /* text-lg */
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+    #search::placeholder {
+      color: #64748b; /* slate-500 */
+    }
+    #search:focus {
+      outline: none;
+      border-color: #64748b; /* slate-500 */
+      box-shadow: 0 0 10px 3px #64748b;
+      background-color: #334155; /* slate-700 */
+      color: #f1f5f9; /* slate-100 */
+    }
+    #scammer-total {
+      font-weight: 700;
+      font-size: 1.25rem; /* text-xl */
+      margin-bottom: 1.5rem;
+      color: #cbd5e1; /* slate-300 */
       user-select: none;
-      text-align: center;
-      font-weight: 800;
-      font-size: 2.5rem;
-      margin-bottom: 2rem;
-      overflow: visible;
     }
-
-    h1::after {
-      content: '';
-      position: absolute;
-      top: 0; left: 0; right: 0; bottom: 0;
-      pointer-events: none;
-      background: radial-gradient(circle at 20% 20%, rgba(255 255 255 / 0.8), transparent 25%),
-                  radial-gradient(circle at 80% 50%, rgba(255 255 255 / 0.6), transparent 25%),
-                  radial-gradient(circle at 50% 80%, rgba(255 255 255 / 0.7), transparent 25%);
-      background-repeat: no-repeat;
-      background-size: 15% 15%, 10% 10%, 12% 12%;
-      animation: sparkle 3s infinite;
-      mix-blend-mode: screen;
+    #people-list {
+      background-color: #1e293b; /* slate-800 */
+      padding: 1.5rem;
+      border-radius: 1rem;
+      border: 1px solid #334155; /* slate-700 */
+      box-shadow: inset 0 0 8px #0f172a; /* darker inset */
+      list-style: none;
+      margin: 0;
     }
-
-    @keyframes sparkle {
-      0%, 100% {
-        background-position:
-          20% 20%,
-          80% 50%,
-          50% 80%;
-        opacity: 0.8;
-      }
-      50% {
-        background-position:
-          18% 22%,
-          82% 48%,
-          52% 78%;
-        opacity: 0.4;
-      }
+    #people-list li {
+      background-color: #273449; /* slate-700 */
+      color: #cbd5e1; /* slate-300 */
+      padding: 1rem;
+      margin-bottom: 0.75rem;
+      border-radius: 0.75rem;
+      border: 1px solid #334155;
+      font-weight: 600;
+      font-size: 1.125rem; /* text-lg */
+      user-select: text;
+      transition: background-color 0.3s ease, color 0.3s ease, transform 0.3s ease;
+      cursor: default;
     }
-
-    @keyframes gradientShift {
-      0% {
-        background-position: 0% 50%;
-      }
-      50% {
-        background-position: 100% 50%;
-      }
-      100% {
-        background-position: 0% 50%;
-      }
+    #people-list li:hover {
+      background-color: #475569; /* slate-500 */
+      color: #f1f5f9; /* slate-100 */
+      transform: translateX(8px);
     }
-
-    @keyframes pulseGlow {
-      0%, 100% {
-        text-shadow:
-          0 0 8px rgba(255, 255, 255, 0.7),
-          0 0 20px rgba(255, 255, 255, 0.8);
+    .container {
+      max-width: 720px;
+      margin: 4rem auto;
+      padding: 2rem;
+      background-color: #1e293b; /* slate-800 */
+      border-radius: 1.5rem;
+      box-shadow: 0 8px 20px rgba(20, 20, 20, 0.8);
+      border: 1px solid #334155;
+    }
+    @media (max-width: 768px) {
+      .container {
+        margin: 2rem 1rem;
+        padding: 1.5rem;
       }
-      50% {
-        text-shadow:
-          0 0 12px rgba(255, 255, 255, 1),
-          0 0 30px rgba(255, 255, 255, 1);
+      #search {
+        font-size: 1rem;
+      }
+      #people-list li {
+        font-size: 1rem;
+        padding: 0.75rem;
       }
     }
   </style>
 </head>
-<body class="bg-gray-900 text-gray-200">
-  <div class="max-w-2xl mx-auto mt-10 p-6 bg-gray-800 shadow-xl rounded-xl">
-    <h1>🕵️‍♂️ รายชื่อบัญชีมิจฉาชีพที่ต้องระวัง ⚠️</h1>
+<body>
+  <div class="container">
+    <h1 class="text-center text-4xl font-extrabold mb-8">
+      🕵️‍♂️ รายชื่อบัญชีมิจฉาชีพที่ต้องระวัง ⚠️
+    </h1>
 
     <!-- ช่องค้นหา -->
-    <div class="mb-2">
-      <input type="text" id="search" placeholder="🔍 ค้นหาชื่อหรือนามสกุล..."
-        class="w-full px-3 py-2 border border-gray-600 bg-gray-700 text-gray-200 rounded-md placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-400" />
-    </div>
+    <input
+      type="text"
+      id="search"
+      placeholder="🔍 ค้นหาชื่อหรือนามสกุล..."
+      autocomplete="off"
+      spellcheck="false"
+    />
 
     <!-- ยอดรวมทั้งหมด -->
-    <p id="scammer-total" class="text-sm text-gray-400 mb-4 text-left font-bold">กำลังโหลดข้อมูลทั้งหมด...</p>
+    <p id="scammer-total" class="mt-4">กำลังโหลดข้อมูลทั้งหมด...</p>
 
     <!-- รายชื่อ -->
-    <div class="bg-gray-700 p-4 rounded-lg border border-gray-600 max-h-[400px] overflow-y-auto no-scrollbar">
-      <ul id="people-list" class="space-y-2">
-        <li class="text-gray-400">กำลังโหลด...</li>
-      </ul>
-    </div>
+    <ul id="people-list" class="mt-6">
+      <li>กำลังโหลด...</li>
+    </ul>
   </div>
 
   <script>
@@ -113,22 +127,19 @@
 
     let allPeople = [];
 
-    // ฟังก์ชันนับเลขขึ้นแบบ Animation
-    function animateCount(element, targetNumber, duration = 1000) {
-      let start = 0;
-      const stepTime = Math.max(Math.floor(duration / targetNumber), 20);
+    function animateCount(element, targetNumber, duration = 1200) {
       const startTime = performance.now();
 
       function update(currentTime) {
         const elapsed = currentTime - startTime;
         const progress = Math.min(elapsed / duration, 1);
         const currentNumber = Math.floor(progress * targetNumber);
-        element.textContent = `ยอดรวมทั้งหมด: ${currentNumber} ราย`;
+        element.textContent = ยอดรวมทั้งหมด: ${currentNumber} ราย;
 
         if (progress < 1) {
           requestAnimationFrame(update);
         } else {
-          element.textContent = `ยอดรวมทั้งหมด: ${targetNumber} ราย`;
+          element.textContent = ยอดรวมทั้งหมด: ${targetNumber} ราย;
         }
       }
 
@@ -144,15 +155,14 @@
       const totalEl = document.getElementById('scammer-total');
 
       if (error) {
-        document.getElementById('people-list').innerHTML = `<li class="text-red-500">${error.message}</li>`;
+        document.getElementById('people-list').innerHTML = <li style="color:#f87171; font-weight:bold;">${error.message}</li>;
         totalEl.textContent = 'เกิดข้อผิดพลาดในการโหลดข้อมูล';
         return;
       }
 
       allPeople = data;
 
-      // แสดงยอดรวมพร้อม animation
-      animateCount(totalEl, data.length, 1000);
+      animateCount(totalEl, data.length, 1200);
 
       showPeople(data);
     }
@@ -162,19 +172,17 @@
       list.innerHTML = '';
 
       if (data.length === 0) {
-        list.innerHTML = '<li class="text-gray-500">ไม่มีข้อมูล</li>';
+        list.innerHTML = '<li style="color:#64748b; text-align:center; font-weight:bold;">ไม่มีข้อมูล</li>';
         return;
       }
 
       data.forEach(person => {
         const li = document.createElement('li');
-        li.className = "bg-gray-800 p-3 rounded-md border border-gray-600 text-gray-200";
-        li.textContent = `${person.scamname} ${person.scamlastname}`;
+        li.textContent = ${person.scamname} ${person.scamlastname};
         list.appendChild(li);
       });
     }
 
-    // ค้นหาแบบเรียลไทม์
     document.getElementById('search').addEventListener('input', function () {
       const keyword = this.value.toLowerCase();
       const filtered = allPeople.filter(p =>
@@ -186,16 +194,5 @@
 
     loadPeople();
   </script>
-
-  <style>
-    /* ซ่อน scrollbar */
-    .no-scrollbar::-webkit-scrollbar {
-      display: none;
-    }
-    .no-scrollbar {
-      -ms-overflow-style: none;  /* IE and Edge */
-      scrollbar-width: none;  /* Firefox */
-    }
-  </style>
 </body>
 </html>
